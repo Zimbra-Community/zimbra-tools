@@ -24,7 +24,7 @@ git clone ssh://github.com/Zimbra-Community/de_dieploegers_admin_vacation
 git clone ssh://github.com/Zimbra-Community/de_dieploegers_godate
 git clone ssh://github.com/Zimbra-Community/pgp-zimlet-test-reports
 git clone ssh://github.com/Zimbra-Community/pgp-zimlet
-git clone ssh://github.com/Zimbra-Community/tools
+git clone ssh://github.com/Zimbra-Community/zimbra-tools
 git clone ssh://github.com/Zimbra-Community/owncloud-zimlet
 git clone ssh://github.com/Zimbra-Community/list-unsubscribe-zimlet
 git clone ssh://github.com/Zimbra-Community/zimbra-patches
