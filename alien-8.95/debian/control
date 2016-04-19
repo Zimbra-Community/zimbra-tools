@@ -1,0 +1,20 @@
+Source: alien
+Section: admin
+Priority: optional
+Build-Depends: debhelper (>= 9)
+Maintainer: Debian QA Group <packages@qa.debian.org>
+Standards-Version: 3.9.6
+Vcs-Git: git://git.kitenet.net/alien
+Homepage: http://kitenet.net/~joey/code/alien/
+
+Package: alien
+Architecture: all
+Depends: debhelper (>= 7), ${misc:Depends}, ${perl:Depends}, rpm (>= 2.4.4-2), dpkg-dev, make, cpio, rpm2cpio
+Suggests: patch, bzip2, lintian, lzma
+Description: convert and install rpm and other packages
+ Alien allows you to convert LSB, Red Hat, Stampede and Slackware Packages
+ into Debian packages, which can be installed with dpkg.
+ .
+ It can also generate packages of any of the other formats.
+ .
+ This is a tool only suitable for binary packages.
