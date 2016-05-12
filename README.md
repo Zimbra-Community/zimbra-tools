@@ -25,6 +25,20 @@ Hierarchical storage allows for older content (mails) to be moved to slower/chea
 For archival purpose we also forked this repo to:
 [https://github.com/Zimbra-Community/zopenhsm](https://github.com/Zimbra-Community/zopenhsm)
 
+## Detect compromised users that are spamming
+
+Try to detect "spammy" changes to a user's Zimbra preferences and
+automatically clear the password of hacked accounts.  Uses a point
+scoring system.
+
+[https://github.com/Zimbra-Community/zimbra-tools/blob/master/checkhack-zimbra-preferences](https://github.com/Zimbra-Community/zimbra-tools/blob/master/checkhack-zimbra-preferences)
+
+## COS report
+
+This script is designed to print out a chart showing all zimbra COS and which servers are associated with each
+
+[https://github.com/Zimbra-Community/zimbra-tools/blob/master/zimbraCOS-Builder.pl](https://github.com/Zimbra-Community/zimbra-tools/blob/master/zimbraCOS-Builder.pl)
+
 ## pull.sh
 
 Download all repositories in Zimbra-Community, bash -x pull.sh
