@@ -25,19 +25,18 @@ unzip cbpolicyd-archive.zip
 
 CBPOLICYD_PWD=$(pwgen 10 -N1)
 
-echo "Are you running CentOS 6 and is this your first install of this script? Type: YES and hit enter. Any other case just hit enter.";
-read SURE;
-if [ "${SURE}" = "YES" ]
-	then
-	cat <<EOF > /tmp/policyd-install.sql
+# creating a user, just to make sure we have one (for mysql on CentOS 6, so we can execute the next mysql queries w/o errors)
+cat <<EOF > /tmp/policyd-install.sql
 CREATE DATABASE policyd_db CHARACTER SET 'UTF8'; 
 CREATE USER 'ad-policyd_db'@'127.0.0.1' IDENTIFIED BY '${CBPOLICYD_PWD}'; 
 GRANT ALL PRIVILEGES ON policyd_db . * TO 'ad-policyd_db'@'127.0.0.1' WITH GRANT OPTION; 
 FLUSH PRIVILEGES ; 
 EOF
-	else
-cat <<EOF > /tmp/policyd-install.sql
-GRANT USAGE ON *.* TO 'ad-policyd_db'@'127.0.0.1';
+
+# need enhancement here with the use of zimbra env settings avoiding zmlocalconfig command
+mysql --host=127.0.0.1 --port=7306 --user=root --password=$(su zimbra -c "/opt/zimbra/bin/zmlocalconfig -s | grep mysql | grep ^mysql_root_password" | awk '{print $3}') < /tmp/policyd-install.sql > /dev/null 2>&1
+
+<<EOF > /tmp/policyd-install.sql
 DROP USER 'ad-policyd_db'@'127.0.0.1';
 DROP DATABASE IF EXISTS policyd_db;
 CREATE DATABASE policyd_db CHARACTER SET 'UTF8'; 
@@ -45,8 +44,6 @@ CREATE USER 'ad-policyd_db'@'127.0.0.1' IDENTIFIED BY '${CBPOLICYD_PWD}';
 GRANT ALL PRIVILEGES ON policyd_db . * TO 'ad-policyd_db'@'127.0.0.1' WITH GRANT OPTION; 
 FLUSH PRIVILEGES ; 
 EOF
-fi
-
 
 # need enhancement here with the use of zimbra env settings avoiding zmlocalconfig command
 cat /tmp/policyd-install.sql
