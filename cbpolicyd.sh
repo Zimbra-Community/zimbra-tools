@@ -3,9 +3,14 @@
 # Documentation used from https://www.zimbrafr.org/forum/topic/7623-poc-zimbra-policyd/
 # https://wiki.zimbra.com/wiki/Postfix_Policyd#Quotas
 
-echo "Automated cbpolicd installer for single-server Zimbra 8.6 on CentOS 7"
+echo "Automated cbpolicd installer for single-server Zimbra 8.6 on CentOS 6 or 7"
 
+echo "Currently this script works on CentOS 7 and is broken on 6"
+
+#CentOS 7
 yum -y groupinstall MariaDB\ Database\ Client
+#CentOS 6
+yum -y groupinstall MySQL\ Database\ client
 yum install -y epel-release 
 yum install -y pwgen
 
@@ -73,9 +78,9 @@ mysql --host=127.0.0.1 --port=7306 --user=root --password=$(su zimbra -c "/opt/z
 
 
 echo "To activate your configuration, run as zimbra user:
-zmprov ms $(zmhostname) +zimbraServiceEnabled cbpolicyd 
-zmprov ms $(zmhostname) zimbraMtaEnableSmtpdPolicyd TRUE
-zmprov ms $(zmhostname) zimbraCBPolicydQuotasEnabled TRUE
+zmprov ms \$(zmhostname) +zimbraServiceEnabled cbpolicyd 
+zmprov ms \$(zmhostname) zimbraMtaEnableSmtpdPolicyd TRUE
+zmprov ms \$(zmhostname) zimbraCBPolicydQuotasEnabled TRUE
 zmcontrol restart
 
 You can find logging here:
