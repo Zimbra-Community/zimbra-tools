@@ -25,9 +25,9 @@ Hierarchical storage allows for older content (mails) to be moved to slower/chea
 For archival purpose we also forked this repo to:
 [https://github.com/Zimbra-Community/zopenhsm](https://github.com/Zimbra-Community/zopenhsm)
 
-## Automated cbpolicd installer for single-server Zimbra 8.6 on CentOS 7
+## Automated cbpolicd installer
 
-Automated cbpolicd installer for single-server Zimbra 8.6 on CentOS 7
+Automated cbpolicd installer for single-server Zimbra 8.6 on CentOS 6 and 7
 
 [https://github.com/Zimbra-Community/zimbra-tools/blob/master/cbpolicyd.sh](https://github.com/Zimbra-Community/zimbra-tools/blob/master/cbpolicyd.sh)
 
