@@ -25,13 +25,11 @@ Hierarchical storage allows for older content (mails) to be moved to slower/chea
 For archival purpose we also forked this repo to:
 [https://github.com/Zimbra-Community/zopenhsm](https://github.com/Zimbra-Community/zopenhsm)
 
-## Detect compromised users that are spamming
+## Automated cbpolicd installer for single-server Zimbra 8.6 on CentOS 7
 
-Try to detect "spammy" changes to a user's Zimbra preferences and
-automatically clear the password of hacked accounts.  Uses a point
-scoring system.
+Automated cbpolicd installer for single-server Zimbra 8.6 on CentOS 7
 
-[https://github.com/Zimbra-Community/zimbra-tools/blob/master/checkhack-zimbra-preferences](https://github.com/Zimbra-Community/zimbra-tools/blob/master/checkhack-zimbra-preferences)
+[https://github.com/Zimbra-Community/zimbra-tools/blob/master/cbpolicyd.sh](https://github.com/Zimbra-Community/zimbra-tools/blob/master/cbpolicyd.sh)
 
 ## COS report
 
