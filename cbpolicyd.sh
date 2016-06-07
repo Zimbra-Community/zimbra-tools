@@ -21,6 +21,17 @@ unzip archive.zip
 
 policypassword=$(pwgen 10 -N1)
 
+echo "Are running CentOS 6 and is this your first install of this script? Type: YES and hit enter.";
+read sure;
+if [ "$sure" = "YES" ]
+then
+cat <<EOF > /tmp/policyd-install.sql
+CREATE DATABASE policyd_db CHARACTER SET 'UTF8'; 
+CREATE USER 'ad-policyd_db'@'127.0.0.1' IDENTIFIED BY '$policypassword'; 
+GRANT ALL PRIVILEGES ON policyd_db . * TO 'ad-policyd_db'@'127.0.0.1' WITH GRANT OPTION; 
+FLUSH PRIVILEGES ; 
+EOF
+else
 cat <<EOF > /tmp/policyd-install.sql
 GRANT USAGE ON *.* TO 'ad-policyd_db'@'127.0.0.1';
 DROP USER 'ad-policyd_db'@'127.0.0.1';
@@ -30,6 +41,9 @@ CREATE USER 'ad-policyd_db'@'127.0.0.1' IDENTIFIED BY '$policypassword';
 GRANT ALL PRIVILEGES ON policyd_db . * TO 'ad-policyd_db'@'127.0.0.1' WITH GRANT OPTION; 
 FLUSH PRIVILEGES ; 
 EOF
+fi
+
+
 
 cat /tmp/policyd-install.sql
 mysql --host=127.0.0.1 --port=7306 --user=root --password=$(su zimbra -c "/opt/zimbra/bin/zmlocalconfig -s | grep mysql | grep ^mysql_root_password" | awk '{print $3}') < /tmp/policyd-install.sql
