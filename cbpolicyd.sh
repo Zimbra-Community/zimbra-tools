@@ -5,8 +5,6 @@
 
 echo "Automated cbpolicd installer for single-server Zimbra 8.6 on CentOS 6 or 7"
 
-echo "Currently this script works on CentOS 7 and is broken on 6"
-
 #CentOS 7
 yum -y groupinstall MariaDB\ Database\ Client
 #CentOS 6
@@ -21,7 +19,7 @@ unzip archive.zip
 
 policypassword=$(pwgen 10 -N1)
 
-echo "Are running CentOS 6 and is this your first install of this script? Type: YES and hit enter.";
+echo "Are running CentOS 6 and is this your first install of this script? Type: YES and hit enter. Any other case just hit enter.";
 read sure;
 if [ "$sure" = "YES" ]
 then
