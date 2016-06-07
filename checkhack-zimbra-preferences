@@ -33,6 +33,8 @@
 # Line 358: Add your domain in place of domain.com
 # Line 415: Add in your own custom code for locking accounts, be it a Zimbra command or something else
 
+# This script does not shell escape properly see: https://github.com/Zimbra-Community/zimbra-tools/blob/master/checkhack-zimbra-preferences.md
+
 umask 077
 
 MAILTO="somewhere@somedomain.com"
