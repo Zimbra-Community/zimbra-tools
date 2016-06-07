@@ -92,9 +92,10 @@ echo "Setting basic policy
 - Rate limit any @domain from receiving more then 50 emails in a 60 second period. Messages beyond this rate are rejected.
 /tmp/policyd-policy.sql"
 
-
 mysql --host=127.0.0.1 --port=7306 --user=root --password=$(su zimbra -c "/opt/zimbra/bin/zmlocalconfig -s | grep mysql | grep ^mysql_root_password" | awk '{print $3}') policyd_db < /tmp/policyd-policy.sql
 
+echo "Setting up cbpolicyd database clean-up daily at 03:35AM in /etc/cron.d/cbpolicyd-cleanup"
+echo "35 3 * * * zimbra bash -l -c '/opt/zimbra/cbpolicyd/bin/cbpadmin --config=/opt/zimbra/conf/cbpolicyd.conf --cleanup' >/dev/null" > /etc/cron.d/cbpolicyd-cleanup
 
 echo "To activate your configuration, run as zimbra user:
 zmprov ms \$(zmhostname) +zimbraServiceEnabled cbpolicyd 
