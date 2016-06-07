@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Documentation used from https://www.zimbrafr.org/forum/topic/7623-poc-zimbra-policyd/
-# https://wiki.zimbra.com/wiki/Postfix_Policyd#Quotas
+# https://wiki.zimbra.com/wiki/Postfix_Policyd#Example_Configuration
 
 echo "Automated cbpolicd installer for single-server Zimbra 8.6 on CentOS 6 or 7"
 
