@@ -102,7 +102,7 @@ echo "Setting basic policy
 /tmp/policyd-policy.sql"
 
 echo "Installing reporting command /usr/local/sbin/cbpolicyd-report (show message count by user/day)"
-echo "/opt/zimbra/bin/mysql policyd_db -e \"select count(instance) count, sender from session_tracking where date(from_unixtime(unixtimestamp))=curdate() group by sender order by count desc limit 10;\"" > /usr/local/sbin/cbpolicyd-report
+echo "/opt/zimbra/bin/mysql policyd_db -e \"select count(instance) count, sender from session_tracking where date(from_unixtime(unixtimestamp))=curdate() group by sender order by count desc;\"" > /usr/local/sbin/cbpolicyd-report
 chmod +rx /usr/local/sbin/cbpolicyd-report
 
 /opt/zimbra/bin/mysql policyd_db < /tmp/policyd-policy.sql
