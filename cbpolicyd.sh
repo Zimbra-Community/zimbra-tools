@@ -36,7 +36,7 @@ EOF
 # need enhancement here with the use of zimbra env settings avoiding zmlocalconfig command
 mysql --force --host=127.0.0.1 --port=7306 --user=root --password=$(su zimbra -c "/opt/zimbra/bin/zmlocalconfig -s | grep mysql | grep ^mysql_root_password" | awk '{print $3}') < /tmp/policyd-install.sql > /dev/null 2>&1
 
-<<EOF > /tmp/policyd-install.sql
+cat <<EOF > /tmp/policyd-install.sql
 DROP USER 'ad-policyd_db'@'127.0.0.1';
 DROP DATABASE IF EXISTS policyd_db;
 CREATE DATABASE policyd_db CHARACTER SET 'UTF8'; 
