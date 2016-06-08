@@ -101,6 +101,10 @@ echo "Setting basic policy
 - Rate limit any @domain from receiving more then 50 emails in a 60 second period. Messages beyond this rate are rejected.
 /tmp/policyd-policy.sql"
 
+echo "Installing reporting command /usr/local/sbin/cbpolicyd-report (show message count by user/day)"
+echo "/opt/zimbra/bin/mysql policyd_db -e \"select count(instance) count, sender from session_tracking where date(from_unixtime(unixtimestamp))=curdate() group by sender order by count desc limit 10;\"" > /usr/local/sbin/cbpolicyd-report
+chmod +rx /usr/local/sbin/cbpolicyd-report
+
 /opt/zimbra/bin/mysql policyd_db < /tmp/policyd-policy.sql
 
 echo "Setting up cbpolicyd database clean-up daily at 03:35AM in /etc/cron.d/cbpolicyd-cleanup"
