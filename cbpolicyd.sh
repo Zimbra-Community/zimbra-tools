@@ -81,13 +81,13 @@ if grep --quiet -e "TYPE=InnoDB" "${POLICYDTABLESSQL}"; then
    grep -lZr -e "TYPE=InnoDB" "${POLICYDTABLESSQL}" | xargs -0 sed -i "s^TYPE=InnoDB^ENGINE=InnoDB^g"
 fi
 
-CBPOLICYDCONF="$(mktemp /tmp/cbpolicyd.conf.in.XXXXXXXX)"
-echo "Backing up /opt/zimbra/conf/cbpolicyd.conf.in in ${CBPOLICYDCONF}"
-cp -a /opt/zimbra/conf/cbpolicyd.conf.in ${CBPOLICYDCONF}
-
 echo "Please wait... policyd_db populating..."
 /opt/zimbra/bin/mysql policyd_db < "${POLICYDTABLESSQL}"
 echo "For your reference the database policyd_db populated using: ${POLICYDTABLESSQL}"
+
+CBPOLICYDCONF="$(mktemp /tmp/cbpolicyd.conf.in.XXXXXXXX)"
+echo "Backing up /opt/zimbra/conf/cbpolicyd.conf.in in ${CBPOLICYDCONF}"
+cp -a /opt/zimbra/conf/cbpolicyd.conf.in ${CBPOLICYDCONF}
 
 echo "Setting username in /opt/zimbra/conf/cbpolicyd.conf.in"
 grep -lZr -e ".*sername=.*$" "/opt/zimbra/conf/cbpolicyd.conf.in" | xargs -0 sed -i "s^.*sername=.*$^Username=ad-policyd_db^g"
