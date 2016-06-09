@@ -24,7 +24,7 @@ set -e
 # https://wiki.zimbra.com/wiki/Postfix_Policyd#Example_Configuration
 # Thanks 
 
-echo "Automated cbpolicd installer for single-server Zimbra 8.6 on CentOS 6 or 7 (Ubuntu untested)
+echo "Automated cbpolicd installer for single-server Zimbra 8.6 and 8.7 on CentOS 6 or 7 (Ubuntu untested)
 - Installs policyd on MariaDB or MySQL (shipped with Zimbra) and show commands on how to activate on Zimbra
 - No webui is installed"
 
@@ -56,9 +56,8 @@ GRANT ALL PRIVILEGES ON policyd_db . * TO 'ad-policyd_db'@'127.0.0.1' WITH GRANT
 FLUSH PRIVILEGES ; 
 EOF
 
+echo "Creating database and user"
 /opt/zimbra/bin/mysql < "${POLICYDDBCREATE}"
-
-echo "For your reference the database policyd_db and user have been created using: ${POLICYDDBCREATE}"
 
 if [ -d "/opt/zimbra/common/share/database/" ]; then
    #shipped version from Zimbra (8.7)
@@ -72,7 +71,7 @@ POLICYDTABLESSQL="$(mktemp /tmp/policyd-dbtables.XXXXXXXX.sql)"
 for i in core.tsql access_control.tsql quotas.tsql amavis.tsql checkhelo.tsql checkspf.tsql greylisting.tsql accounting.tsql; 
 	do 
 	./convert-tsql mysql $i;
-	done > ""${POLICYDTABLESSQL}""
+	done > "${POLICYDTABLESSQL}"
 
 # have to replace TYPE=InnoDB with ENGINE=InnoDB, this is not needed when using the latest upstream version of cbpolicyd
 # but it seems to be an issue in the version shipped with Zimbra 8.6 (not 8.7)
@@ -80,12 +79,12 @@ if grep --quiet -e "TYPE=InnoDB" "${POLICYDTABLESSQL}"; then
    grep -lZr -e "TYPE=InnoDB" "${POLICYDTABLESSQL}" | xargs -0 sed -i "s^TYPE=InnoDB^ENGINE=InnoDB^g"
 fi
 
-echo "Please wait... policyd_db populating..."
+echo "Populating policyd_db please wait..."
 /opt/zimbra/bin/mysql policyd_db < "${POLICYDTABLESSQL}"
-echo "For your reference the database policyd_db populated using: ${POLICYDTABLESSQL}"
+
 
 CBPOLICYDCONF="$(mktemp /tmp/cbpolicyd.conf.in.XXXXXXXX)"
-echo "Backing up /opt/zimbra/conf/cbpolicyd.conf.in in ${CBPOLICYDCONF}"
+echo "Backing up cbpolicyd.conf.in"
 cp -a /opt/zimbra/conf/cbpolicyd.conf.in ${CBPOLICYDCONF}
 
 echo "Setting username in /opt/zimbra/conf/cbpolicyd.conf.in"
@@ -107,24 +106,54 @@ INSERT INTO quotas_limits (QuotasID,Type,CounterLimit) VALUES(3, 'MessageCount',
 INSERT INTO quotas_limits (QuotasID,Type,CounterLimit) VALUES(4, 'MessageCount', 50);
 EOF
 
-echo "Setting basic policy
-- Rate limit any sender from sending more then 20 emails every 60 seconds. Messages beyond this limit are deferred.
-- Rate limit any @domain from receiving more then 50 emails in a 60 second period. Messages beyond this rate are rejected.
-${POLICYDPOLICYSQL}"
+echo "Setting basic quota policy"
 
 /opt/zimbra/bin/mysql policyd_db < "${POLICYDPOLICYSQL}"
 
-echo "Installing reporting command /usr/local/sbin/cbpolicyd-report (show message count by user/day)"
+echo "Installing reporting commands"
 echo "/opt/zimbra/bin/mysql policyd_db -e \"select count(instance) count, sender from session_tracking where date(from_unixtime(unixtimestamp))=curdate() group by sender order by count desc;\"" > /usr/local/sbin/cbpolicyd-report
 chmod +rx /usr/local/sbin/cbpolicyd-report
 
-echo "Setting up cbpolicyd database clean-up daily at 03:35AM in /etc/cron.d/cbpolicyd-cleanup"
+echo "Setting up cron"
 echo "35 3 * * * zimbra bash -l -c '/opt/zimbra/cbpolicyd/bin/cbpadmin --config=/opt/zimbra/conf/cbpolicyd.conf --cleanup' >/dev/null" > /etc/cron.d/cbpolicyd-cleanup
 
-echo "To activate your configuration, run as zimbra user:
+echo "--------------------------------------------------------------------------------------------------------------
+CBPolicyd installed successful, the following policy is installed:
+- Rate limit any sender from sending more then 20 emails every 60 seconds. Messages beyond this limit are deferred.
+- Rate limit any @domain from receiving more then 50 emails in a 60 second period. Messages beyond this rate are rejected.
+
+For your reference:
+- Database policyd_db and user have been created using: 
+  ${POLICYDDBCREATE}
+- Database structure has been created using:
+  ${POLICYDTABLESSQL}
+- The quota/rate limiting policy has been created using:
+  ${POLICYDPOLICYSQL}
+- A configuration backup is in:
+  ${CBPOLICYDCONF}   
+- Running config is in:
+  /opt/zimbra/conf/cbpolicyd.conf.in
+- Database clean-up is scheduled daily at 03:35AM using:
+  /etc/cron.d/cbpolicyd-cleanup
+
+Here are some tips:
+- You can run /usr/local/sbin/cbpolicyd-report 
+  to show message count by sender/day 
+- On Zimbra patches and upgrades, you may need to re-run
+  this script or re-apply the configuration  
+- You can change or review your polcies using mysql client:
+  /opt/zimbra/bin/mysql policyd_db
+  SELECT * FROM quotas_limits;
+  UPDATE quotas_limits SET CounterLimit = 30 WHERE ID = 4;
+
+To activate your configuration, run as zimbra user:
 zmprov ms \$(zmhostname) +zimbraServiceEnabled cbpolicyd
 zmprov ms \$(zmhostname) zimbraCBPolicydQuotasEnabled TRUE
-zmcontrol restart
+
+And then reboot OR wait for the MTA to rewrite the config files and
+do zmcontrol restart.
 
 You can find logging here:
-tail -f /opt/zimbra/log/cbpolicyd.log"
+tail -f /opt/zimbra/log/cbpolicyd.log
+--------------------------------------------------------------------------------------------------------------
+"
