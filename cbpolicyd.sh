@@ -37,16 +37,17 @@ fi
 CBPOLICYD_PWD=$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c${1:-10};echo;)
 
 # creating a user, just to make sure we have one (for mysql on CentOS 6, so we can execute the next mysql queries w/o errors)
-cat <<EOF > /tmp/policyd-install.sql
+POLICYDDBCREATE="$(mktemp /tmp/policyd-dbcreate.XXXXXXXX.sql)"
+cat <<EOF > "${POLICYDDBCREATE}"
 CREATE DATABASE policyd_db CHARACTER SET 'UTF8'; 
 CREATE USER 'ad-policyd_db'@'127.0.0.1' IDENTIFIED BY '${CBPOLICYD_PWD}'; 
 GRANT ALL PRIVILEGES ON policyd_db . * TO 'ad-policyd_db'@'127.0.0.1' WITH GRANT OPTION; 
 FLUSH PRIVILEGES ; 
 EOF
 
-/opt/zimbra/bin/mysql --force < /tmp/policyd-install.sql > /dev/null 2>&1
+/opt/zimbra/bin/mysql --force < "${POLICYDDBCREATE}" > /dev/null 2>&1
 
-cat <<EOF > /tmp/policyd-install.sql
+cat <<EOF > "${POLICYDDBCREATE}"
 DROP USER 'ad-policyd_db'@'127.0.0.1';
 DROP DATABASE policyd_db;
 CREATE DATABASE policyd_db CHARACTER SET 'UTF8'; 
@@ -55,10 +56,10 @@ GRANT ALL PRIVILEGES ON policyd_db . * TO 'ad-policyd_db'@'127.0.0.1' WITH GRANT
 FLUSH PRIVILEGES ; 
 EOF
 
-cat /tmp/policyd-install.sql
-/opt/zimbra/bin/mysql < /tmp/policyd-install.sql
+cat "${POLICYDDBCREATE}"
+/opt/zimbra/bin/mysql < "${POLICYDDBCREATE}"
 
-echo "For your reference the database policyd_db and user have been created using: /tmp/policyd-install.sql"
+echo "For your reference the database policyd_db and user have been created using: ${POLICYDDBCREATE}"
 
 if [ -d "/opt/zimbra/common/share/database/" ]; then
    #shipped version from Zimbra (8.7)
@@ -68,23 +69,25 @@ else
    cd /opt/zimbra/cbpolicy*/share/database/ >/dev/null
 fi
 
+POLICYDTABLESSQL="$(mktemp /tmp/policyd-dbtables.XXXXXXXX.sql)"
 for i in core.tsql access_control.tsql quotas.tsql amavis.tsql checkhelo.tsql checkspf.tsql greylisting.tsql accounting.tsql; 
 	do 
 	./convert-tsql mysql $i;
-	done > /tmp/policyd.sql
+	done > ""${POLICYDTABLESSQL}""
 
 # have to replace TYPE=InnoDB with ENGINE=InnoDB, this is not needed when using the latest upstream version of cbpolicyd
 # but it seems to be an issue in the version shipped with Zimbra 8.6 (not 8.7)
-if grep --quiet -e "TYPE=InnoDB" "/tmp/policyd.sql"; then
-   grep -lZr -e "TYPE=InnoDB" "/tmp/policyd.sql" | xargs -0 sed -i "s^TYPE=InnoDB^ENGINE=InnoDB^g"
+if grep --quiet -e "TYPE=InnoDB" "${POLICYDTABLESSQL}"; then
+   grep -lZr -e "TYPE=InnoDB" "${POLICYDTABLESSQL}" | xargs -0 sed -i "s^TYPE=InnoDB^ENGINE=InnoDB^g"
 fi
 
-echo "Backing up /opt/zimbra/conf/cbpolicyd.conf.in in /tmp/"
-cp -a /opt/zimbra/conf/cbpolicyd.conf.in /tmp/cbpolicyd.conf.in.$(date +%s)
+CBPOLICYDCONF="$(mktemp /tmp/cbpolicyd.conf.in.XXXXXXXX)"
+echo "Backing up /opt/zimbra/conf/cbpolicyd.conf.in in ${CBPOLICYDCONF}"
+cp -a /opt/zimbra/conf/cbpolicyd.conf.in ${CBPOLICYDCONF}
 
 echo "Please wait... policyd_db populating..."
-/opt/zimbra/bin/mysql policyd_db < /tmp/policyd.sql
-echo "For your reference the database policyd_db populated using: /tmp/policyd.sql"
+/opt/zimbra/bin/mysql policyd_db < "${POLICYDTABLESSQL}"
+echo "For your reference the database policyd_db populated using: ${POLICYDTABLESSQL}"
 
 echo "Setting username in /opt/zimbra/conf/cbpolicyd.conf.in"
 grep -lZr -e ".*sername=.*$" "/opt/zimbra/conf/cbpolicyd.conf.in" | xargs -0 sed -i "s^.*sername=.*$^Username=ad-policyd_db^g"
@@ -95,7 +98,8 @@ grep -lZr -e ".*assword=.*$" "/opt/zimbra/conf/cbpolicyd.conf.in"  | xargs -0 se
 echo "Setting database in /opt/zimbra/conf/cbpolicyd.conf.in"
 grep -lZr -e "DSN=.*$" "/opt/zimbra/conf/cbpolicyd.conf.in"  | xargs -0 sed -i "s^DSN=.*$^DSN=DBI:mysql:database=policyd_db;host=127.0.0.1;port=7306^g"
 
-cat <<EOF > /tmp/policyd-policy.sql
+POLICYDPOLICYSQL="$(mktemp /tmp/policyd-policy.XXXXXXXX.sql)"
+cat <<EOF > "${POLICYDPOLICYSQL}"
 INSERT INTO policies (ID, Name,Priority,Description) VALUES(6, 'Zimbra CBPolicyd Policies', 0, 'Zimbra CBPolicyd Policies');
 INSERT INTO policy_members (PolicyID,Source,Destination) VALUES(6, 'any', 'any');
 INSERT INTO quotas (PolicyID,Name,Track,Period,Verdict,Data) VALUES (6, 'Sender:user@domain','Sender:user@domain', 60, 'DEFER', 'Deferring: Too many messages from sender in last 60');
@@ -107,13 +111,13 @@ EOF
 echo "Setting basic policy
 - Rate limit any sender from sending more then 20 emails every 60 seconds. Messages beyond this limit are deferred.
 - Rate limit any @domain from receiving more then 50 emails in a 60 second period. Messages beyond this rate are rejected.
-/tmp/policyd-policy.sql"
+${POLICYDPOLICYSQL}"
+
+/opt/zimbra/bin/mysql policyd_db < "${POLICYDPOLICYSQL}"
 
 echo "Installing reporting command /usr/local/sbin/cbpolicyd-report (show message count by user/day)"
 echo "/opt/zimbra/bin/mysql policyd_db -e \"select count(instance) count, sender from session_tracking where date(from_unixtime(unixtimestamp))=curdate() group by sender order by count desc;\"" > /usr/local/sbin/cbpolicyd-report
 chmod +rx /usr/local/sbin/cbpolicyd-report
-
-/opt/zimbra/bin/mysql policyd_db < /tmp/policyd-policy.sql
 
 echo "Setting up cbpolicyd database clean-up daily at 03:35AM in /etc/cron.d/cbpolicyd-cleanup"
 echo "35 3 * * * zimbra bash -l -c '/opt/zimbra/cbpolicyd/bin/cbpadmin --config=/opt/zimbra/conf/cbpolicyd.conf --cleanup' >/dev/null" > /etc/cron.d/cbpolicyd-cleanup
