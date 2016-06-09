@@ -150,8 +150,9 @@ To activate your configuration, run as zimbra user:
 zmprov ms \$(zmhostname) +zimbraServiceEnabled cbpolicyd
 zmprov ms \$(zmhostname) zimbraCBPolicydQuotasEnabled TRUE
 
-And then reboot OR wait for the MTA to rewrite the config files and
-do zmcontrol restart.
+Rebooting your server will tell the MTA to start using cbpolicyd and works for sure.
+You can also try using zmmtactl restart and zmcbpolicydctl start (in that order!). 
+Testing shows that using zmcontrol restart does not enable cbpolicyd.
 
 You can find logging here:
 tail -f /opt/zimbra/log/cbpolicyd.log
