@@ -60,16 +60,24 @@ cat /tmp/policyd-install.sql
 
 echo "For your reference the database policyd_db and user have been created using: /tmp/policyd-install.sql"
 
-#shipped version from Zimbra
-cd /opt/zimbra/cbpolicy*/share/database/
+if [ -d "/opt/zimbra/common/share/database/" ]; then
+   #shipped version from Zimbra (8.7)
+   cd /opt/zimbra/common/share/database/ >/dev/null
+else
+   #shipped version from Zimbra (8.6)
+   cd /opt/zimbra/cbpolicy*/share/database/ >/dev/null
+fi
+
 for i in core.tsql access_control.tsql quotas.tsql amavis.tsql checkhelo.tsql checkspf.tsql greylisting.tsql accounting.tsql; 
 	do 
 	./convert-tsql mysql $i;
 	done > /tmp/policyd.sql
 
 # have to replace TYPE=InnoDB with ENGINE=InnoDB, this is not needed when using the latest upstream version of cbpolicyd
-# but it seems to be an issue in the version shipped with Zimbra
-grep -lZr -e "TYPE=InnoDB" "/tmp/policyd.sql" | xargs -0 sed -i "s^TYPE=InnoDB^ENGINE=InnoDB^g"
+# but it seems to be an issue in the version shipped with Zimbra 8.6 (not 8.7)
+if grep --quiet -e "TYPE=InnoDB" "/tmp/policyd.sql"; then
+   grep -lZr -e "TYPE=InnoDB" "/tmp/policyd.sql" | xargs -0 sed -i "s^TYPE=InnoDB^ENGINE=InnoDB^g"
+fi
 
 echo "Backing up /opt/zimbra/conf/cbpolicyd.conf.in in /tmp/"
 cp -a /opt/zimbra/conf/cbpolicyd.conf.in /tmp/cbpolicyd.conf.in.$(date +%s)
