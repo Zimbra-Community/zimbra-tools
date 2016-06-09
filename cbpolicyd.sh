@@ -56,7 +56,6 @@ GRANT ALL PRIVILEGES ON policyd_db . * TO 'ad-policyd_db'@'127.0.0.1' WITH GRANT
 FLUSH PRIVILEGES ; 
 EOF
 
-cat "${POLICYDDBCREATE}"
 /opt/zimbra/bin/mysql < "${POLICYDDBCREATE}"
 
 echo "For your reference the database policyd_db and user have been created using: ${POLICYDDBCREATE}"
