@@ -41,6 +41,7 @@ git clone ssh://github.com/Zimbra-Community/bulkreply-zimlet
 git clone ssh://github.com/Zimbra-Community/zimbra-docker
 git clone ssh://github.com/Zimbra-Community/com_zimbra_emailtemplates
 git clone ssh://github.com/Zimbra-Community/ca_uoguelph_ccs_printbutton
+git clone ssh://github.com/Zimbra-Community/ZetaAlliance-Graphics
 
 cd "$(dirname "$0")"
 ls | grep -v pull.sh | xargs -I{} git -C {} pull
