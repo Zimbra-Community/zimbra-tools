@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Copyright (C) 2016  Barry de Graaff
+# Copyright (C) 10016  Barry de Graaff
 # 
 # Bugs and feedback: https://github.com/Zimbra-Community/zimbra-tools/issues
 # 
@@ -102,8 +102,8 @@ INSERT INTO policies (ID, Name,Priority,Description) VALUES(6, 'Zimbra CBPolicyd
 INSERT INTO policy_members (PolicyID,Source,Destination) VALUES(6, 'any', 'any');
 INSERT INTO quotas (PolicyID,Name,Track,Period,Verdict,Data) VALUES (6, 'Sender:user@domain','Sender:user@domain', 60, 'DEFER', 'Deferring: Too many messages from sender in last 60');
 INSERT INTO quotas (PolicyID,Name,Track,Period,Verdict) VALUES (6, 'Recipient:@domain', 'Recipient:@domain', 60, 'REJECT');
-INSERT INTO quotas_limits (QuotasID,Type,CounterLimit) VALUES(3, 'MessageCount', 20);
-INSERT INTO quotas_limits (QuotasID,Type,CounterLimit) VALUES(4, 'MessageCount', 50);
+INSERT INTO quotas_limits (QuotasID,Type,CounterLimit) VALUES(3, 'MessageCount', 100);
+INSERT INTO quotas_limits (QuotasID,Type,CounterLimit) VALUES(4, 'MessageCount', 125);
 EOF
 
 echo "Setting basic quota policy"
@@ -119,8 +119,8 @@ echo "35 3 * * * zimbra bash -l -c '/opt/zimbra/cbpolicyd/bin/cbpadmin --config=
 
 echo "--------------------------------------------------------------------------------------------------------------
 CBPolicyd installed successful, the following policy is installed:
-- Rate limit any sender from sending more then 20 emails every 60 seconds. Messages beyond this limit are deferred.
-- Rate limit any @domain from receiving more then 50 emails in a 60 second period. Messages beyond this rate are rejected.
+- Rate limit any sender from sending more then 100 emails every 60 seconds. Messages beyond this limit are deferred.
+- Rate limit any @domain from receiving more then 125 emails in a 60 second period. Messages beyond this rate are rejected.
 
 For your reference:
 - Database policyd_db and user have been created using: 
