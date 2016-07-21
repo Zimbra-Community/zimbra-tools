@@ -5,6 +5,9 @@ This is an assortment of tools for various administrative tasks for the Zimbra
   
 These tools are currently available:
 
+## Zimbra Docker by ZeXtras
+[https://hub.docker.com/r/zextras/zimbra8/](https://hub.docker.com/r/zextras/zimbra8/)
+
 * checkdevices (contributed by Dennis Ploeger) - A python script for reporting 
 unauthorized device use in Zimbra
 
