@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Copyright (C) 10016  Barry de Graaff
+# Copyright (C) 2016  Barry de Graaff
 # 
 # Bugs and feedback: https://github.com/Zimbra-Community/zimbra-tools/issues
 # 
