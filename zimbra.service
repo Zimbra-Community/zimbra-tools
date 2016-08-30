@@ -1,0 +1,19 @@
+# systemd integration for Zimbra, cat this into /etc/systemd/system/zimbra.service
+# And remove the /etc/init.d/zimbra file and all /etc/rc.*/*zimbra* crap before deploying this service file
+[Unit]
+Description=Zimbra Collaboration Suite
+After=syslog.target network.target
+Conflicts=sendmail.service exim.service postfix.service
+
+[Service]
+Type=simple
+User=zimbra
+Group=zimbra
+ExecStart=/opt/zimbra/bin/zmcontrol start
+ExecStop=/opt/zimbra/bin/zmcontrol stop
+ExecReload=/opt/zimbra/bin/zmcontrol restart
+
+TimeoutSec=500
+
+[Install]
+WantedBy=multi-user.target
