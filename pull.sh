@@ -43,6 +43,9 @@ git clone ssh://git@github.com/Zimbra-Community/com_zimbra_emailtemplates
 git clone ssh://git@github.com/Zimbra-Community/ca_uoguelph_ccs_printbutton
 git clone ssh://git@github.com/Zimbra-Community/ZetaAlliance-Graphics
 git clone ssh://git@github.com/Zimbra-Community/zmexit
+git clone ssh://git@github.com/Zimbra-Community/zimbra-jars
+git clone ssh://git@github.com/Zimbra-Community/shared-mailbox-toolkit
+git clone ssh://git@github.com/Zimbra-Community/zmsharedgal
 
 cd "$(dirname "$0")"
 ls | grep -v pull.sh | xargs -I{} git -C {} pull
