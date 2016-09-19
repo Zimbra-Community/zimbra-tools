@@ -5,6 +5,14 @@ This is an assortment of tools for various administrative tasks for the Zimbra
   
 These tools are currently available:
 
+## Kickstart file for automatic creation of Zimbra 8.7 repo mirror
+This kickstart file automates this wiki: https://wiki.zimbra.com/wiki/Zimbra_Collaboration_repository
+
+You can create your repo using KVM by doing something similar to: https://github.com/Zimbra-Community/pgp-zimlet/blob/stable/kvm/virt-install.sh or you can start the kickstart with a CentOS7 install ISO. After installation you only need to copy your SSL key and crt file to the new server.
+
+https://github.com/Zimbra-Community/zimbra-tools/blob/master/centos7-zimbra-repo.cfg
+
+
 ## Zimbra Docker by ZeXtras
 [https://hub.docker.com/r/zextras/zimbra8/](https://hub.docker.com/r/zextras/zimbra8/)
 
