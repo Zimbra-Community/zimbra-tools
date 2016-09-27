@@ -1,8 +1,0 @@
-Package: pgp-zimlet
-Version: 2.0.7-1
-Maintainer: Barry de Graaff <info@barrydegraaff.tl>
-Architecture: all
-Description: PGP message extension for Zimbra
- Demo video: https://www.youtube.com/watch?v=APLFSEO7QXg
- .
- User manual: https://barrydegraaff.github.io/help/

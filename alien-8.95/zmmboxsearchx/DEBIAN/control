@@ -1,0 +1,5 @@
+Package: zmmboxsearchx
+Version: 20100625-1
+Maintainer: Barry de Graaff <info@barrydegraaff.tk>
+Architecture: all
+Description: The CLI command zmmboxsearchx is used to search across mailboxes. You can search across mailboxes to find messages and attachments that match specific criteria and save copies of these messages to a directory.

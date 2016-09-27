@@ -1,0 +1,12 @@
+#!/bin/bash
+
+WHO=`whoami`
+if [ $WHO != "zimbra" ]
+then
+echo
+echo "Execute this scipt as user zimbra (\"su - zimbra\")"
+echo
+exit 1
+fi
+
+/opt/zmmboxsearchx/bin/zmmboxsearchx $@

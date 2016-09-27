@@ -51,3 +51,17 @@ This script is designed to print out a chart showing all zimbra COS and which se
 ## pull.sh
 
 Download all repositories in Zimbra-Community, bash -x pull.sh
+
+## zmmboxsearchx for Zimbra foss
+The CLI command zmmboxsearchx is used to search across mailboxes. You can search across mailboxes to find messages and attachments that match specific criteria and save copies of these messages to a directory. Created by Phil Pearl as part of bug 43265.
+
+This tool is a bit buggy, if it fails, trying again usually does the trick. 
+
+    zmmboxsearchx --query admin --account admin@myzimbra.com,test@myzimbra.com
+
+    wget https://github.com/Zimbra-Community/zimbra-tools/blob/master/alien-8.95/zmmboxsearchx-20100625-2.noarch.rpm
+    rpm -i zmmboxsearchx-20100625-2.noarch.rpm
+    -or-
+    wget https://github.com/Zimbra-Community/zimbra-tools/blob/master/alien-8.95/zmmboxsearchx.deb
+    dpkg -i zmmboxsearchx.deb
+

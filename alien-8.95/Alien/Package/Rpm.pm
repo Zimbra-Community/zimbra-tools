@@ -314,7 +314,7 @@ sub prep {
 
 		# Note all filenames are quoted in case they contain
 		# spaces.
-      if ( ($fn eq '/') || (($fn eq '/opt/')) )
+      if ( ($fn eq '/') || (($fn eq '/opt/')) || (($fn eq '/usr/')) || (($fn eq '/usr/local/')) || (($fn eq '/usr/local/sbin/')) )
       {
          print "Ignoring file that is known to conflict (file conflicts with file from package filesystem): ";         
          print $fn;
