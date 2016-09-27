@@ -59,9 +59,9 @@ This tool is a bit buggy, if it fails, trying again usually does the trick.
 
     zmmboxsearchx --query admin --account admin@myzimbra.com,test@myzimbra.com
 
-    wget https://github.com/Zimbra-Community/zimbra-tools/blob/master/alien-8.95/zmmboxsearchx-20100625-2.noarch.rpm
+    wget https://github.com/Zimbra-Community/zimbra-tools/raw/master/alien-8.95/zmmboxsearchx-20100625-2.noarch.rpm
     rpm -i zmmboxsearchx-20100625-2.noarch.rpm
     -or-
-    wget https://github.com/Zimbra-Community/zimbra-tools/blob/master/alien-8.95/zmmboxsearchx.deb
+    wget https://github.com/Zimbra-Community/zimbra-tools/raw/master/alien-8.95/zmmboxsearchx.deb
     dpkg -i zmmboxsearchx.deb
 
