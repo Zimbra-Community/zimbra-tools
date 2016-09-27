@@ -65,4 +65,4 @@ This tool is a bit buggy, if it fails, trying again usually does the trick.
     wget https://github.com/Zimbra-Community/zimbra-tools/raw/master/alien-8.95/zmmboxsearchx.deb
     dpkg -i zmmboxsearchx.deb
 
-Example: zmmboxsearchx --query admin --account testuser3@myzimbra.com,admin@myzimbra.com,test@myzimbra.com
+Example: `zmmboxsearchx --query admin --account testuser3@myzimbra.com,admin@myzimbra.com,test@myzimbra.com`
