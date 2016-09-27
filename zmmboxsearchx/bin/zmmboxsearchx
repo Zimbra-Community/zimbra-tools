@@ -1,0 +1,1325 @@
+#!/usr/bin/perl
+#
+# ***** BEGIN LICENSE BLOCK *****
+#
+# Zimbra Collaboration Suite Server
+# Copyright (C) 2010 Zimbra, Inc.
+#
+# The contents of this file are subject to the Yahoo! Public License
+# Version 1.0 ("License"); you may not use this file except in
+# compliance with the License.  You may obtain a copy of the License at
+# http://www.zimbra.com/license.
+#
+# Software distributed under the License is distributed on an "AS IS"
+# basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.
+#
+# ***** END LICENSE BLOCK *****
+
+=head1 NAME
+
+zmmboxsearchx - search through ZCS mailboxes
+
+=head1 SYNOPSIS
+
+zmmboxsearchx [options] [<userlistfile> ...]
+
+  Options: [*] == Required, [+] == Multiple vals OK, (val) == Default
+    --query <query_string>   [*]query string
+    --dir <directory>        directory to write messages to (no directory)
+    --account <acct>         [+]account to include, comma separated values ok
+    --exclude <acct>         [+]account to exclude, comma separated values ok
+    --exclude-file <file>    [+]file listing accounts to exclude
+    --searchdirectory <filt> ldap filter to search for accounts
+    --server <hostname>      mailbox server (LC:zimbra_zmprov_default_soap_server)
+    --limit <num>            limit the total number of results returned (25)
+    --offset <num>           offset in hit list to start at (0)
+    --proc <num>             maximum number of child/worker processes to use (4)
+    --url <url>              URL of soap service (LC:...)
+    --authuser <user>        account for authentication (LC:zimbra_ldap_user)
+    --password <password>    password for authuser (LC:zimbra_ldap_password)
+    --help                   display a brief help message
+    --man                    display the entire man page
+    --debug [<num>]          verbose output useful for debugging
+    --verbose                increase verbosity (increments --debug)
+
+  Note: LC:<key> means the default is read from localconfig if possible.
+
+=head1 EXAMPLES
+
+  # search all mailboxes for messages matching query 'invoice number*'
+  $ zmmboxsearchx -m '*' --query 'invoice number*'
+
+  # only search phil@test.loc,bob@test.loc for messages from "phil"
+  $ zmmboxsearchx -m phil@test.loc,bob@test.loc --query "from:phil"
+
+  # report on all mailboxes specified in input file except phil@test.loc
+  $ zmmboxsearchx --url https://localhost:7071/service/admin/soap/ \
+     --query "to:phil" --exclude phil@test.loc <input file>
+
+=head1 DESCRIPTION
+
+This utility uses the ZCS Admin SOAP API to search mailboxes for
+messages matching the specified query.
+
+The output of this program consists of a count of matched messages
+along with a ZCS XML message object fragment representing the message
+that was matched.
+
+=head1 OPTIONS
+
+The section describes supported options.  The following key is used to
+indicates required arguments, arguments which can be supplied multiple
+times, etc.:
+
+  [*]   == Required
+  [+]   == Multiple vals OK
+
+=over 4
+
+=item --query <query_string>
+
+[*] Query string used to search for messages.  Note: the query string
+should be properly quoted/escaped to avoid shell interpolation.
+
+Examples:
+
+   "invoice number"
+   "zimbra*"
+   "after:01/01/2010 before:04/15/2010"
+
+=item --dir <directory>
+
+Directory to write messages to (no directory).  If none is specified
+then only the headers are fetched.  File names are generated in the
+form of ACCOUNT-ID_MAILITEMID.
+
+INCOMPATIBILITY: file names are generated as ACCOUNT-ID_MAILITEMID
+instead of RESULTNUM_ACCOUNT-ID_MAILITEMID which is used in standard
+zmmboxsearch.
+
+=item --account <acct>
+
+[+] Account(s) to include in the report.  Argument aliases include
+'-m' and '-mbox'.  This argument can be specified multiple times or as
+a comma separated values (CSV) list of mailboxes to search.  Valid
+values are smtp addresses or a '*' to search all mailboxes.
+
+NOTE: If '*' is specified, then internally this sets --searchdirectory
+"" which equates to doing a wildcard search.  However, because of this
+implementation, --account '*' can not be used in conjunction with
+--searchdirectory "<filt>".
+
+INCOMPATIBILITY: UIDs and /SERVER/MAILBOXID values are not currently
+supported even though they are documented to be supported with the
+standard zmmboxsearch.
+
+=item --exclude <acct>
+
+[+] Account(s) to exclude from the report.
+
+=item --exclude-file <file>
+
+[+] File(s) listing accounts to exclude from the report.
+
+See also L<Input File Format>.
+
+=item --searchdirectory <filt>
+
+LDAP filter used to search the directory for accounts.  The search is
+performed via ZCS Admin SOAP SearchDirectoryRequest and uses the
+default 'types=account' to only match accounts.
+
+Examples:
+
+   'mail=user1@domain.com'      : single user
+   'mail=*@domain.com'          : All users in domain.com
+   'mail=*'                     : All users on server
+
+=item --server <hostname>
+
+Mailbox server to connect to for access to the ZCS Admin SOAP
+interface.  Default is from localconfig
+"zimbra_zmprov_default_soap_server" or "localhost" if that is not set.
+
+=item --limit <num>
+
+Limit the total number of results returned.  Default is 25 matches.
+
+INCOMPATIBILITY: Setting this to 0 effectively makes the limit
+unlimited.  In the standard zmmboxsearch setting this to 0 (or any
+negative number) causes the program to generate no output.
+
+=item --offset <num>
+
+Offset in hit list to start at.  Default is zero (0).
+
+=item --proc <num>
+
+The maximum number of child/worker processes to use when searching
+mailboxes.  Default is four (4).
+
+=item --url <url>
+
+URL of soap service.  The following are examples of URLs that would
+typically be used.  Default is from localconfig:
+
+    zimbra_admin_service_scheme
+  . zimbra_zmprov_default_soap_server
+  . ":"
+  . zimbra_admin_service_port
+  . "/service/admin/soap/"
+
+Example:
+
+  (admin account) https://localhost:7071/service/admin/soap/
+
+=item --authuser <user>
+
+Account used for authentication.  Typically this will be an
+administrator account.  Default is from localconfig
+"zimbra_ldap_user".
+
+=item --password <password>
+
+Password for authuser account. Default is from localconfig
+"zimbra_ldap_password".
+
+=item --help
+
+Display a brief help message.
+
+=item --man
+
+Display the entire man page.
+
+=item --debug [<level>]
+
+Verbose output useful for debugging.  An optional B<level> integer can
+be provided to increase debugging output.  By default the level will
+be set to 1 with the highest possible debugging level currently being
+3.
+
+=item --verbose
+
+Increase logging verbosity by incrementing --debug by 1.
+
+=item <userlistfile>
+
+[+] File(s) listing accounts to report on.
+
+See also L<Input File Format>.
+
+=back
+
+=cut
+
+use strict;
+use warnings;
+use Benchmark qw(timediff timestr);
+use Carp ();
+use File::Basename qw(basename dirname fileparse);
+use File::Spec ();
+use File::Temp ();
+use Getopt::Long qw(GetOptions);
+use IO::File qw();
+use Pod::Usage qw(pod2usage);
+use POSIX qw(:signal_h);
+
+# deal with non standard Perl modules
+# - see also load_modules subroutine...
+# - need Parallel::ForkManager, SOAP::Lite
+# - HACK: need version.pm (SOAP::Lite prereq is missing in ZCS 6.x)
+#   made local copy as a workaround
+use FindBin;
+use lib "$FindBin::Bin/../lib";
+use lib qw(/opt/zimbra/zimbramon/lib/);
+
+use constant {
+    NS_ZADMIN   => "urn:zimbraAdmin",
+    NS_ZACCOUNT => "urn:zimbraAccount",
+    NS_ZIMBRA   => "urn:zimbra",
+    NS_ZMAIL    => "urn:zimbraMail",
+};
+
+$|++;
+my $DEBUG   = 0;              # GLOBAL set by process_options()
+my $VERSION = "1.00";
+my $Prog    = basename($0);
+
+main();
+
+# main program
+sub main {
+    my %Argv = process_options();
+
+    my $tStart = Benchmark->new;
+    warn( "$Prog: info: started ", _ts(), "\n" );
+
+    SOAP::Lite->import( $DEBUG > 3 ? ( +trace => [qw(debug)] ) : () );
+    SOAP::Lite->soapversion("1.2");
+
+    # ->autotype(0): ZCS (internal proxy) servers seem slightly
+    #   broken, use to avoid error like:
+    #   The prefix "xsi" for attribute "xsi:type" associated with an
+    #   element type "account" is not bound.
+    #
+    # ->readable(1): make xml easier to read when debugging
+    my $soap = SOAP::Lite->proxy( $Argv{url} )->autotype(0);
+
+    my @aargs = ( { soap => $soap }, $Argv{authuser}, $Argv{password} );
+    my $resp  = do_adminauth(@aargs);
+    my $ainfo = auth_info( resp => $resp );
+    my $sdat;
+
+    # an empty $Argv{searchdirectory} is a wildcard search
+    if ( defined $Argv{searchdirectory} ) {
+        $sdat = searchdirectory( { soap => $soap, head => $ainfo->{header} },
+            $Argv{searchdirectory} );
+        warn( "$Prog: D3: searchdirectory accounts matched: ",
+            scalar(@$sdat), "\n" )
+          if ( $DEBUG > 2 );
+    }
+
+    my $excl =
+      load_accounts( $Argv{exclude}, @{ $Argv{"exclude-file"} || [] } );
+    my $accts =
+      load_accounts( { exclude => $excl }, $Argv{account}, $sdat, @ARGV );
+
+    die("$Prog: ERROR: no accounts to search!\n") unless @$accts;
+
+    # define query for searching through mailboxes
+    warn( "$Prog: info: total accounts: ", scalar @$accts, "\n" );
+    warn( "$Prog: info: beginning search for '$Argv{query}' ", _ts(), "\n" );
+
+    # gather data
+    my $data = getmboxdata(
+        {
+            soap  => $soap,
+            ainfo => $ainfo,
+        },
+        \%Argv,
+        $accts,
+    );
+
+    my $tEnd = Benchmark->new;
+
+    warn( "$Prog: info: finished ", _ts(), "\n" );
+    warn( "$Prog: info: took ", timestr( timediff( $tEnd, $tStart ) ), "\n" );
+}
+
+###
+# subroutines
+
+# process_options will die via pod2usage on errors
+sub process_options {
+    my ( %Argv, @err );
+
+    GetOptions(
+        \%Argv,              "account|mbox|m=s@",
+        "searchdirectory=s", "exclude=s@",
+        "exclude-file=s@",   "query=s",
+        "dir|d=s",           "limit:i",
+        "proc:i",            "offset:i",
+        "server|s=s",        "url=s",
+        "authuser=s",        "password=s",
+        "help",              "man",
+        "debug:1",           "verbose+",
+    ) or pod2usage( -verbose => 0 );
+
+    pod2usage( -message => "$Prog: version $VERSION\n", -verbose => 1 )
+      if ( $Argv{help} );
+    pod2usage( -verbose => 2 ) if ( $Argv{man} );
+
+    # set global DEBUG
+    # - let --verbose increment DEBUG
+    $DEBUG = $Argv{debug} || 0;
+    $DEBUG += $Argv{verbose} if $Argv{verbose};
+
+    my $lc;
+    my %lcmap = (
+        authuser => "zimbra_ldap_user",
+        password => "zimbra_ldap_password",
+    );
+
+    $Argv{proc} = 4
+      unless ( exists $Argv{proc} and $Argv{proc} > 0 );
+
+    # defaults from standard zmmboxsearch
+    $Argv{offset} = 0
+      unless ( exists $Argv{offset} and $Argv{offset} >= 0 );
+    $Argv{limit} = 25
+      unless ( exists $Argv{limit} and $Argv{limit} >= 0 );
+
+    # defaults for authuser and password
+    foreach my $arg ( keys %lcmap ) {
+        next if exists $Argv{$arg};
+        $lc ||= ZCS::LocalConfig->new;
+        if ( !$lc ) {
+            push( @err, ZCS::LocalConfig->errstr() );
+            last;
+        }
+        $Argv{$arg} = $lc->get( $lcmap{$arg} );
+    }
+
+    # default for url
+    unless ( exists $Argv{url} ) {
+        $lc ||= ZCS::LocalConfig->new;
+        if ( !$lc ) {
+            push( @err, ZCS::LocalConfig->errstr() );
+        }
+        else {
+            my $path = "/service/admin/soap/";
+            my ( $scheme, $server, $port ) = $lc->get(
+                qw(zimbra_admin_service_scheme
+                  zimbra_zmprov_default_soap_server
+                  zimbra_admin_service_port
+                  )
+            );
+            $scheme ||= "https:";
+            $server ||= "localhost";
+            $port   ||= "7071";
+
+            $server = $Argv{server} if $Argv{server};
+
+            $Argv{url} = $scheme . $server . ":" . $port . $path;
+        }
+    }
+
+    foreach my $arg (qw(url authuser password query)) {
+        push( @err, "--$arg is required" ) if ( !$Argv{$arg} );
+    }
+
+    my $acctopts = "use of --account, --searchdirectory or <userlistfile>";
+    push( @err, "$acctopts is required" )
+      unless ( $Argv{account} or @ARGV or $Argv{searchdirectory} );
+
+    my @modules = qw(Parallel::ForkManager SOAP::Lite);
+
+    if ( $Argv{dir} ) {
+        push( @modules, qw(HTTP::Request LWP::UserAgent URI) );
+        push( @err,     "--dir '$Argv{dir}' is not a directory" )
+          unless ( -d $Argv{dir} or -d "$Argv{dir}/." );
+    }
+
+    push( @err, load_modules(@modules) )
+      if @modules;
+
+    push( @err, "try --help option for more information" ) if (@err);
+
+    # compatibility with standard zmmboxsearch
+    # - support CSV: -m user1,user2,... or -m '*'
+    if ( !@err and $Argv{account} ) {
+        my @acct;
+        my %filt;
+        foreach my $str ( @{ $Argv{account} } ) {
+            foreach my $addr ( split( /\s*,\s*/, $str ) ) {
+                if ( $addr eq "*" ) {
+                    next if $filt{$addr}++;    # dedup
+                    if ( $Argv{searchdirectory} ) {
+                        my $sdk = "searchdirectory";
+                        my $e   = "have -m '$addr' -$sdk '$Argv{$sdk}'";
+                        push( @err, "only one search filter allowed: $e" );
+                    }
+                    else {
+                        $Argv{searchdirectory} = "";
+                    }
+                }
+                else {
+                    push( @acct, $addr );
+                }
+            }
+        }
+        $Argv{account} = \@acct;
+    }
+
+    pod2usage(
+        -verbose => 0,
+        -message => join( "", map( "$Prog: $_\n", @err ) )
+    ) if (@err);
+
+    # BUG: hardcoded stuff...
+    $Argv{_startprocpersec} ||= 20;
+    $Argv{_startwait}       ||= 0.100;
+
+    return %Argv;
+}
+
+sub load_modules {
+    my @modules = @_;
+    my @missing;
+    local ($@);
+    foreach my $m (@modules) {
+        eval "require $m";
+        push( @missing, $m ) if ($@);
+    }
+    return (
+        @missing
+        ? (
+            "missing required Perl modules: @missing",
+            "install these from CPAN or via a package manager",
+          )
+        : ()
+    );
+}
+
+# NOTE: request is only allowed for admin accounts via admin interface!
+# searchdirectory( { soap => $soap, head => $ahdr }, $filter )
+sub searchdirectory {
+    my $opt = ( ref( $_[0] ) eq "HASH" ) ? shift : {};
+    my ($filter) = @_;
+
+    my $body = [ SOAP::Data->name( "query" => $filter ) ];
+
+    # NOTE: a large limit can make XML parsing very slow!
+    my $limit = 50;
+    my $attr  = {
+        xmlns      => NS_ZADMIN,
+        types      => "account",
+        limit      => $limit,
+        attrs      => "mail",
+        applyCos   => 0,
+        maxResults => 0,
+    };
+
+    # NOTE: use fully qualified path for speed!
+    my $data = [];
+    my $path = "/Envelope/Body/SearchDirectoryResponse";
+    my $more;
+    do {
+        my $som = call_soap(
+            %$opt,
+            req  => "SearchDirectoryRequest",
+            attr => $attr,
+            body => $body
+        );
+        $more = $som->dataof($path)->attr->{more};
+        $attr->{offset} += $limit;
+
+        my $i = 0;
+        foreach my $acc ( $som->dataof("$path/account") ) {
+
+            # $msom is used to restrict search for values
+            $i++;
+            my $msom = $som->match("$path/[$i]")
+              or die("MATCH '$path/[$i]' failed\n");
+
+            # attrs: name=<email>, id=<id>
+            my $attr = $acc->attr;
+            push( @$data, $attr->{name} );
+        }
+    } until ( !$more );
+
+    return $data;
+}
+
+# <m ... f="{flags}" s="{size}" d="{date}" ...>
+#   <e .../>*  <!- from only --> ...
+# </m>
+# {size}  = size in bytes
+# {flags} = (u)nread, (f)lagged, has (a)ttachment, (r)eplied,
+#           (s)ent by me, for(w)arded, calendar in(v)ite, (d)raft,
+#           IMAP-\Deleted(x), (n)otification sent, urgent(!), low-priority(?)
+# {date}  = secs since epoch, from date header in message
+# <e .../>* = zero or more addrs in the msg, indentified by type (t="f|t|c")
+
+# searchmbox( { soap => $soap, head => $ahdr }, $Argv, $dinfo, $out )
+sub searchmbox {
+    my $opt = ( ref( $_[0] ) eq "HASH" ) ? shift : {};
+    my ( $Argv, $dinfo, $out ) = @_;
+
+    my $body = [ SOAP::Data->name( "query" => $Argv->{query} ) ];
+
+    # estimate how many we need...
+    my $count = count();
+    my $most = $Argv->{limit} ? $Argv->{limit} - $count : undef;
+    return 0 if defined($most) and $most < 0;
+
+    # NOTE: a large limit like 1000 can make XML parsing very slow!
+    # - have found limit up to 200 typically performs OK
+    my $limit = ( defined($most) and $most < 200 ) ? $most : 200;
+    my $attr = {
+        xmlns  => NS_ZMAIL,
+        types  => "message",
+        sortby => "dateAsc",
+        limit  => $limit,
+        offset => $Argv->{offset},
+    };
+
+    # NOTE: use fully qualified path for speed!
+    my $path = "/Envelope/Body/SearchResponse";    # "//SearchResponse";
+    my $more = 1;
+    my @id;
+
+    # loop until no more data or until we get all we needed
+    while ($more) {
+        last if defined($most) and @id >= $most;
+        my $som = call_soap(
+            %$opt,
+            req  => "SearchRequest",
+            attr => $attr,
+            body => $body
+        );
+        $more = $som->dataof($path)->attr->{more};
+        $attr->{offset} += $limit;
+
+        # HACK:
+        # - match original tool (unsightly?) XML-ish output
+        # - for speed we manipulate XML directly!
+        my $xml = $som->context->transport->http_response->content;
+        open( my $xmlfh, "<", \$xml )
+          or die("$Prog: error: open() in memory failed: $!\n");
+
+        local ($1);
+        my $state = 0;
+
+        # BUG: this could possibly match a subject or other...
+        # - try to match id="..." up to </m> or \n for some safety
+        my $idre = qr{\bid=\"(\d+)\"\B(.*?(?:</m>|$))};
+        while ( my $line = <$xmlfh> ) {
+
+            # remove text to the start of <SearchResponse <- here
+            if ( !$state ) {    # state 1 == found SearchResponse
+                next unless $line =~ s,^.*?<SearchResponse,,;
+                $state = 1;
+            }
+
+            # remove text to the end of <SearchResponse...> <- here
+            if ( $state == 1 ) {    # state 2 == looking for messages
+                next unless $line =~ s,^.*?>,,;
+                $state = 2;
+            }
+
+            # remove text from </SearchResponse> to the end
+            my $done = ( $line =~ s,</SearchResponse>.*,, ) ? 1 : 0;
+            if ( $state > 1 ) {     # state 3 == found messages
+                $state = 3 if ( $line =~ m,^<m , );
+
+                # add UUID to id like standard zmmboxsearch does
+                if ( $state == 3 ) {
+                    while ( $line =~ m/$idre/g ) {
+                        push( @id, $1 );
+                    }
+                    my $uuid = $dinfo->{uuid};
+                    $line =~ s,$idre,id="$uuid:$1"$2,g;
+                    $line =~ s,(</m>)\015?\012?,$1\n,g;
+                    print( $out $line, "\n" );
+                }
+            }
+            last if $done;
+        }
+    }
+
+    # download copies of the messages
+    if ( $Argv->{dir} ) {
+        my $ua  = LWP::UserAgent->new;
+        my $uri = URI->new( $Argv->{url} );
+
+        # http://$server:$port/home/$user/?...&id=$id
+        my ( $user, $uuid, $token ) = @{$dinfo}{qw(name uuid token)};
+        $uri->path("/home/$user/");
+        $uri->query_form( auth => "qp", zauthtoken => $token );
+        my $uri_base = $uri->as_string;
+
+        foreach my $id (@id) {
+            my $file = File::Spec->catfile( $Argv->{dir}, $uuid . "_" . $id );
+            my $uri  = $uri_base . "&id=" . $id;
+            my $req  = HTTP::Request->new( GET => $uri );
+            my $res  = $ua->request( $req, $file );
+            my $err =
+              !$res->is_success ? $res->status_line : $res->header('X-Died');
+            warn( "$Prog: $user GET id=$id failed: ", $err, "\n" )
+              if $err;
+        }
+    }
+    return scalar @id;
+}
+
+# getmboxdata( { soap => $soap, ainfo => $ainfo }, $Argv, $accts );
+sub getmboxdata {
+    my $opt = ( ref( $_[0] ) eq "HASH" ) ? shift : {};
+    my ( $Argv, $accts ) = @_;
+    my ( $soap, $ainfo ) = @{$opt}{qw(soap ainfo)};
+    my $ahdr = $ainfo->{header};
+
+    # make process resilient to some signals
+    $SIG{HUP} = "IGNORE";    # ignore $SIG{INT} too?
+
+    # support runtime increment/decrement of maximum number of child processes
+
+    my ( %Child, $SigCount, $Seen, $done );
+    $SIG{USR1} = $SIG{USR2} = sub {
+        my ($signame) = @_;
+        my $change = 0;
+        if    ( $signame eq "USR1" ) { ++$change; }
+        elsif ( $signame eq "USR2" ) { --$change; }
+        else { warn("$Prog: signal '$signame' unexpected\n"); }
+
+        if ($change) {
+            $SigCount += $change;
+            warn("$Prog: D3: saw $signame, SigCount is now $SigCount\n")
+              if $DEBUG > 2;
+        }
+    };
+
+    my $pmgr = Parallel::ForkManager->new( $Argv->{proc} );
+    $pmgr->run_on_finish(
+        sub { cleanup( $Argv, \%Child, @_ ) if ( $Argv->{proc} ); } );
+    $pmgr->run_on_wait(
+        sub {
+            $pmgr->wait_children;
+            unless ($done) {
+                $done = chk_control_files( $SigCount, $Seen, $pmgr, \%Child );
+                $pmgr->wait_children;
+            }
+        },
+        1.0
+    );
+
+    my $startprocpersec = $Argv->{_startprocpersec};
+    my ( $t_start, $c_start, $t_last ) = ( 0, 0, 0 );
+    my %data;
+    while ( !$done ) {
+        last if ( $Argv->{limit} and count() >= $Argv->{limit} );
+        last if !@$accts;
+        my $acct = shift @$accts;
+
+        my $dinfo =
+          delegateauth_info( { soap => $soap, head => $ahdr }, name => $acct );
+        my $dhdr = $dinfo->{header};
+        my $uuid = $dinfo->{uuid};
+
+        if ( exists $data{$uuid} ) {
+            warn("$Prog: NOTOE: '$acct' is the same as '$uuid', skipping.\n");
+            next;
+        }
+        $data{$uuid} = $acct;
+
+        # note: start can sometimes happen even after TERM/PAUSE seen...
+        my $dir = $Argv->{dir} || File::Spec->tmpdir();
+        my $out = File::Temp->new( TEMPLATE => "${Prog}_XXXXX", DIR => $dir );
+        my $pid = $pmgr->start;
+        my $ref = {
+            tstart => Benchmark->new,
+            acct   => $acct,
+            out    => $out,
+        };
+        if ($pid) {
+            $t_start = time();
+            warn( "$Prog: D2: ", _ts(), " pid($pid) started $acct\n" )
+              if $DEBUG > 1;
+            $Child{$pid} = $ref;
+        }
+        else {
+
+            # reset signal handlers in the child
+            $SIG{HUP} = $SIG{INT} = "DEFAULT";
+
+            # message data is written to $out
+            my $rc = searchmbox( { soap => $soap, head => $dhdr },
+                $Argv, $dinfo, $out );
+            warn("$Prog: D1: messages found in $acct: $rc\n")
+              if ($DEBUG);
+
+            $pmgr->finish(0);
+        }
+    }
+    continue {
+
+        # start() may have been waiting so check control files again
+        $pmgr->wait_children;
+        $done = chk_control_files( $SigCount, $Seen, $pmgr, \%Child );
+
+       # slow start:
+       # - initially no more than $Argv->{_startprocpersec} processes per second
+       # - increase startprocpersec until maxproc takes over
+        if ($t_start) {
+            if ( $t_start eq $t_last ) {
+                if ( ++$c_start >= $startprocpersec ) {
+                    $startprocpersec += 2;
+                    select( undef, undef, undef, $Argv->{_startwait} )
+                      while ( time() <= $t_start );
+                }
+            }
+            else {
+                $t_last  = $t_start;
+                $c_start = 1;
+            }
+            $t_start = 0;
+        }
+    }
+
+    # cleanup for cases when start happens after TERM/PAUSE is seen...
+    chk_control_files( $SigCount, $Seen, $pmgr, \%Child );
+    $pmgr->wait_all_children;
+
+    # BUG: anything useful to return?
+}
+
+# delegateauth_info( { soap => $soap, auth => $ainfo }, name => $acct );
+sub delegateauth_info {
+    my ( $opt, @args ) = @_;
+
+    my $resp = do_delegateauth(@_);
+    my $soap = $opt->{soap};
+    my $hdr  = auth_info( resp => $resp );
+
+    # use call to get sessionId will also identify bad accounts...
+    $resp = do_getinfo( { soap => $soap, head => $hdr->{header} }, "mbox" );
+    my $uuid = $resp->valueof('/Envelope/Body/GetInfoResponse/id');
+
+    return {
+        @args,
+        uuid => $uuid,
+        %{ auth_info( resp => $resp, token => $hdr->{token} ) }
+    };
+}
+
+# do_adminauth( { soap => $soap }, $Argv{authuser}, $Argv{password} );
+sub do_adminauth {
+    my $opt = ( ref( $_[0] ) eq "HASH" ) ? shift : {};
+    my ( $name, $password ) = @_;
+
+    my $head = SOAP::Header->name("context")->attr( { xmlns => NS_ZADMIN } );
+    my $body = [
+        SOAP::Data->name( name     => $name ),
+        SOAP::Data->name( password => $password ),
+    ];
+
+    return call_soap(
+        %$opt,
+        req  => "AuthRequest",
+        attr => { xmlns => NS_ZADMIN },
+        head => $head,
+        body => $body
+    );
+}
+
+# do_delegateauth( { soap => $soap }, "id|name" => $acct );
+sub do_delegateauth {
+    my $opt = ( ref( $_[0] ) eq "HASH" ) ? shift : {};
+    my ( $by, $acct ) = @_;
+
+    my $body = [ SOAP::Data->name( account => $acct )->attr( { by => $by } ), ];
+
+    return call_soap(
+        %$opt,
+        req  => "DelegateAuthRequest",
+        attr => { xmlns => NS_ZADMIN },
+        body => $body
+    );
+}
+
+# do_getinfo( { soap => $soap, head => $ahdr }, $sections )
+sub do_getinfo {
+    my $opt = ( ref( $_[0] ) eq "HASH" ) ? shift : {};
+    my ($sections) = @_;
+
+    my $attr = { xmlns => NS_ZACCOUNT };
+    $attr->{sections} = $sections if $sections;
+
+    # ZCS http/soap proxy chokes on requests if SOAP::Data uses xsi:nil="true"
+    my $body = [ [] ];
+
+    return call_soap(
+        %$opt,
+        req  => "GetInfoRequest",
+        attr => $attr,
+        body => $body
+    );
+}
+
+sub call_soap {
+    my %opt = @_;
+
+    # die on errors by default
+    unless ( exists $opt{RaiseError} or exists $opt{PrintError} ) {
+        $opt{RaiseError} = 1;
+    }
+
+    my $handler =
+        $opt{RaiseError} ? sub { die(@_) }
+      : $opt{PrintError} ? sub { warn(@_) }
+      :                    undef;
+
+    my $soap = $opt{soap};
+    my $req  = SOAP::Data->name( $opt{req} );
+    $req->attr( $opt{attr} ) if $opt{attr};
+
+    my $resp;
+    my ( $try, $maxtry, $sleep ) = ( 0, 3, 0 );
+    while ( !$resp && $try++ < $maxtry ) {
+        eval { $resp = $soap->call( $req, $opt{head}, @{ $opt{body} } ) };
+        if ($@) {
+            chomp($@);
+            last unless ( $try < $maxtry );
+            $sleep += $try;    # back off a little more on each retry
+            warn("$Prog: sleep($sleep): try#$try soap error: $@\n");
+            sleep($sleep);
+        }
+    }
+
+    if ( $handler && ( $@ || $resp->fault ) ) {
+        $handler->(
+            "$Prog: ERROR: $opt{req} (try #$try): ",
+            ( $@ || _err($resp) ), "\n"
+        );
+    }
+
+    return $resp;
+}
+
+# extract auth info from AuthResponse
+sub auth_info {
+    my %opt = @_;
+
+    my $resp  = $opt{resp};
+    my $sid   = $opt{sessionId} || $resp->valueof('//sessionId');
+    my $token = $opt{token} || $resp->valueof('//authToken');
+
+    Carp::confess("$Prog: no authToken found!\n")
+      unless ($token);
+
+    $sid ||= "";
+    warn("$Prog: D3: auth_info: sessionId($sid) authToken: $token\n")
+      if $DEBUG > 2;
+
+    my $ahdr = SOAP::Header->name(
+        "context" => \SOAP::Header->value(
+            SOAP::Header->name( "authToken" => $token ),
+            (
+                $sid
+                ? SOAP::Header->name("sessionId")->attr( { id => $sid } )
+                : ()
+            )
+        )
+    )->attr( { xmlns => NS_ZIMBRA } );
+
+    return { header => $ahdr, sessionId => $sid, token => $token };
+}
+
+sub process_entry {
+    my ($line) = @_;
+
+    # ignore comments even with leading spaces
+    return if ( $line =~ s/^\s*(?:#|$)// );
+
+    # strip leading/trailing spaces
+    $line =~ s/^\s*//;
+    $line =~ s/\s*$//;
+
+    # ensure the smtp address is lower case
+    my $smtp = $line;
+    $smtp = lc($smtp) if defined($smtp);
+
+    return $smtp;
+}
+
+sub _chk_acct {
+    my ( $smtp, $ahash, $exclude ) = @_;
+
+    # warn about duplicate accounts
+    if ( exists( $ahash->{$smtp} ) ) {
+        warn("$Prog: warning: ignoring duplicate acct: $smtp\n");
+        return 0;
+    }
+
+    return undef if exists( $exclude->{$smtp} );
+
+    return $ahash->{$smtp} = 1;
+}
+
+sub load_accounts {
+    my $opt = ( ref( $_[0] ) eq "HASH" ) ? shift : {};
+    my @ds = @_;
+
+    # support excluding accounts
+    my %exclude = map { $_ => 1 } @{ $opt->{exclude} || [] };
+    my $exclcnt = 0;
+    my $ahash   = {};
+    my ( @accts, @alist, @files );
+
+    # separate account lists (arefs) from file names (strings)
+    foreach my $ds (@ds) {
+        next unless ( defined $ds );
+        ref($ds) ? push( @alist, @$ds ) : push( @files, $ds );
+    }
+
+    foreach my $acct (@alist) {
+        my $smtp = process_entry($acct);
+        my $rc = _chk_acct( $smtp, $ahash, \%exclude );
+        $exclcnt++ if ( !defined($rc) );
+        push( @accts, $smtp ) if ($rc);
+    }
+
+    foreach my $file (@files) {
+        my $fh = IO::File->new("< $file")
+          or die("$Prog: error: open($file) failed: $!\n");
+
+        while ( defined( my $line = <$fh> ) ) {
+            chomp($line);
+
+            # notice: we force $smtp to lowercase in process_entry
+            my $smtp = process_entry($line);
+
+            # warn about unexpected lines
+            unless ($smtp) {
+                warn("$Prog: warning: file '$file': skipping line: $_\n")
+                  unless ( $line =~ s/^\s*(?:#|$)// );
+                next;
+            }
+
+            my $rc = _chk_acct( $smtp, $ahash, \%exclude );
+            $exclcnt++ if ( !defined($rc) );
+            push( @accts, $smtp ) if ($rc);
+        }
+    }
+
+    warn("$Prog: note: $exclcnt account(s) excluded via exclude list(s)\n")
+      if ($exclcnt);
+
+    return \@accts;
+}
+
+sub _err {
+    my ($resp) = @_;
+    Carp::confess("$Prog: no response object\n") unless ($resp);
+    return ( $resp->valueof('//Fault/Reason/Text') || "<unknown>" )
+      . ( $DEBUG > 2 ? ( ": " . Dumper( $resp->fault ) ) : "" );
+}
+
+# format: 02 Oct 2005 07:50:32 -0500 (EST)
+sub _ts {
+    return POSIX::strftime( "%d %b %Y %H:%M:%S %z (%Z)", localtime(time) );
+}
+
+=head1 Input File Format
+
+The list of users to update can be read from the command line or via
+input files.  For the input file, blank lines, lines with only white
+space, and lines beginning with (optional whitespace) and then '#' are
+all skipped.
+
+Entries in the input file are simply in the format of one "user" per
+line, where user is in the format of "user@domain".
+
+Examples:
+
+  user1@dom1.name
+  user2@dom2.name
+  user3@dom3.name
+
+=head1 Performance
+
+Searching serially through mailboxes is likely to be slow.  Some
+attempts have been made to tune this utility to reduce run time where
+possible.  This section describes some of the tuning performed:
+
+=head2 SearchRequest limit
+
+The ZCS SearchRequest SOAP call provides paged results.  Below are
+timings with various values for 'limit'.
+
+Test mailbox with 16674 msgs.  A limit of 200 was chosen after these
+tests.
+
+ limit: timing via Benchmark
+ ------ --------------------
+   250: 238 wallclock secs (151.49 usr +  0.12 sys = 151.61 CPU)
+   225: 233 wallclock secs (137.40 usr +  0.10 sys = 137.50 CPU)
+   200: 227 wallclock secs (124.16 usr +  0.11 sys = 124.27 CPU)
+   150: 234 wallclock secs (98.25 usr +  0.13 sys = 98.38 CPU)
+   100: 282 wallclock secs (71.88 usr +  0.15 sys = 72.03 CPU)
+    75: 318 wallclock secs (59.26 usr +  0.17 sys = 59.43 CPU)
+    50: 445 wallclock secs (47.32 usr +  0.21 sys = 47.53 CPU)
+
+=head2 SearchDirectoryRequest limit
+
+The ZCS SearchDirectoryRequest SOAP call provides paged results.
+Below are timings with various values for 'limit' with 'maxResults'
+set to zero (0).
+
+Test directory with more than 83000 entries.  A limit of 50 was chosen
+after these tests.
+
+ limit: timing via time(1)
+ ------ --------------------
+   500: real 21m19.636s user 20m42.027s sys 0m0.395s
+   200: real  9m36.827s user  8m52.900s sys 0m0.717s
+   100: real  5m47.554s user  4m50.981s sys 0m0.769s
+    75: real  4m51.761s user  3m54.414s sys 0m0.799s
+    50: real  4m17.056s user  3m02.626s sys 0m1.246s
+    40: real  4m22.345s user  2m57.274s sys 0m1.530s
+
+=head1 BUGS and KNOWN ISSUES
+
+=over 4
+
+=item *
+
+When using -d (or --dir) <directory>, file names are generated as
+ACCOUNT-ID_MAILITEMID instead of RESULTNUM_ACCOUNT-ID_MAILITEMID which
+is used in standard zmmboxsearch.
+
+=item *
+
+When using -m (or --mbox) <acct>, UIDs and /SERVER/MAILBOXID values are
+not currently supported even though they are documented to be
+supported with the standard zmmboxsearch.
+
+=item *
+
+The standard zmmboxsearch has some limitations that this version does
+not have.  In particular, the original/standard zmmboxsearch uses the
+SearchMultipleMailboxesRequest SOAP request.  This method of searching
+has the following caveat:
+
+  "Some search parameters will behave strangely when use [sic] across
+  multiple mailboxes.  In particular, Folders and Tags are local to
+  the account making the search (NOT the account being searched in) --
+  so things like "in:inbox" will not return extra results even if
+  multiple mailboxes are specified.  In general this API is intended
+  to be used for text-based searches, or searches with system flags
+  such as "unread"."
+
+=back
+
+=cut
+
+# code run in parent at the completion of each child process
+sub cleanup {
+    my ( $Argv, $Child, $pid, $rc, $ident, $signum, $coredump ) = @_;
+
+    my $tnow = _ts( fmt => "%Y-%m-%d %T" );                # YYYY-MM-DD HH:MM:SS
+    my $data = delete $Child->{$pid};
+    my $diff = timediff( Benchmark->new, $data->{tstart} );
+    my $secs = $diff->real;
+
+    # make sure $rc indicates failure if we got a signal/coredump
+    my @info;
+    if ($signum) {
+        push( @info, "signal=$signum" );
+        $rc ||= -2;
+    }
+    if ($coredump) {
+        push( @info, "dumped core" );
+        $rc ||= -3;
+    }
+
+    # log additional info on errors
+    unshift( @info, "failed to start: $!" ) if ( $rc == -1 );
+
+    my $tag = $rc ? "error($rc)" : "finished";
+    my $msg = "$Prog: $tag ${secs}s $data->{acct} $tnow";
+    $msg .= " " . join( ", ", @info ) if (@info);
+
+    warn( $msg, "\n" ) if ( $rc || $DEBUG > 1 );
+
+    # done when report returns undef
+    return report( $Argv, $data );
+}
+
+# BUG? could rename files to match standard zmmboxsearch if desired
+# - NOTE: standard zmmboxsearch starts count at 0 (not 1)
+BEGIN {
+	$ENV{HTTPS_CA_FILE} = '/opt/zimbra/ssl/zimbra/ca/ca.pem';
+    my $Count = 0;
+
+    sub count {
+        return $Count;
+    }
+
+    sub report {
+        my ( $Argv, $data ) = @_;
+        my $fh = $data->{out};
+
+        # need to reset the seek pointer!
+        seek( $fh, 0, 0 );
+        my $limit = $Argv->{limit};
+        while ( my $line = <$fh> ) {
+
+            # stop reporting when we reach requested limit
+            return undef if ( $limit and $Count >= $limit );
+
+            chomp($line);
+            next if ( $line =~ /^\s*$/ );
+            print( $Count++, ") ", $line, "\n" );
+        }
+        return $Count;
+    }
+}
+
+# chk_control_files in on_wait may slow $pmgr from seeing finished children
+# DO NOT call any pmgr methods in here as this is called via on_wait!
+sub chk_control_files {
+    my ( $SigCount, $Seen, $pmgr, $Child ) = @_;
+    my ( $file, @pids );
+
+    warn( "$Prog: D2: ", _ts(), " in chk_control_files()\n" ) if $DEBUG > 1;
+
+    # PAUSE if told to do so - make notify interval configurable?
+    my $timen = 0;
+    while ( defined( $file = _do_pause() ) ) {
+
+        # let TERM and STOP override PAUSE
+        last if _do_term() || _do_stop();
+        unless ($timen) {
+            @pids = keys %$Child;
+            kill( "STOP", @pids ) if (@pids);
+        }
+
+        # print a status message every X seconds
+        if ( $timen < time() ) {
+            warn( "$Prog: info: PAUSE for '$file' at ", _ts(), "\n" );
+            $timen = time() + 600;
+        }
+
+        # make sleep interval configurable?
+        sleep(1);
+    }
+
+    if (@pids) {
+        warn( "$Prog: info: PAUSE file removed at ", _ts(), "\n" );
+        kill( "CONT", @pids );
+    }
+
+    # TERM or STOP if told to do so
+    # - this code may run more than once if we were waiting in start()
+    {
+        if ( defined( $file = _do_term() ) ) {
+            warn( "$Prog: info: TERM for '$file' at ", _ts(), "\n" )
+              if ( !$Seen );
+            @pids = keys %$Child;
+            kill( "TERM", @pids ) if @pids;
+        }
+        elsif ( defined( $file = _do_stop() ) ) {
+            warn( "$Prog: info: STOP for '$file' at ", _ts(), "\n" )
+              if ( !$Seen );
+        }
+        $Seen = $file if $file;
+    }
+
+    # handle received signals
+    if ( $SigCount and $pmgr ) {
+        my $oproc = $pmgr->{max_proc};
+        my $newss = POSIX::SigSet->new( SIGUSR1, SIGUSR2 );
+        my $oldss = POSIX::SigSet->new;
+
+        warn("$Prog: WARN: could not block USR1,USR2 signals: $!\n")
+          unless defined sigprocmask( SIG_BLOCK, $newss, $oldss );
+
+        my $nproc = $oproc + $SigCount;
+        $SigCount = 0;
+
+        warn("$Prog: WARN: could not restore USR1,USR2 signals: $!\n")
+          unless defined sigprocmask( SIG_SETMASK, $oldss );
+
+        $nproc = 1 unless $nproc > 1;
+        $pmgr->{max_proc} = $nproc;
+        warn("$Prog: info: max_proc now at $nproc (was $oproc)\n");
+    }
+
+    return ( $Seen or $file );
+}
+
+sub _file_check {
+    my ($name) = @_;
+    Carp::confess("_file_check: missing name argument\n") unless ($name);
+    my $f = "$Prog.$name";
+    return ( -e $f ) ? $f : undef;
+}
+
+sub _do_pause { _file_check("PAUSE"); }
+sub _do_stop  { _file_check("STOP"); }
+sub _do_term  { _file_check("TERM"); }
+
+{
+
+    package ZCS::LocalConfig;
+
+    use strict;
+    use warnings;
+    use IO::File qw();
+    use IPC::Open3 qw(open3);
+    use Symbol qw(gensym);
+
+    use constant ZMLOCALCONFIG => "/opt/zimbra/bin/zmlocalconfig";
+
+    my ( $err, $errstr );
+    sub err    { return $err; }
+    sub errstr { return $errstr; }
+
+    sub _set_err {
+        my $self = shift;
+        ( $err, $errstr ) = @_;
+        return undef if $err;
+    }
+
+    sub new {
+        my ( $class, $self ) = ( shift, {@_} );
+        bless( $self, $class );
+        return $self;
+    }
+
+    sub get {
+        my ( $self, @args ) = ( shift, @_ );
+
+        # load entire localconf into memory on first get
+        unless ( $self->{__conf} ) {
+            $self->{__conf} = $self->load or return $self->err;
+        }
+
+        if ( @args == 1 ) {
+            return $self->{__conf}->{ $args[0] };
+        }
+        elsif ( @args > 1 ) {
+            my @ret = @{ $self->{__conf} }{@args};
+            return wantarray ? @ret : \@ret;
+        }
+        elsif ( @args == 0 ) {
+            return $self->{__conf};
+        }
+        else {
+            return $self->_set_err( 1, "get: invalid arguments" );
+        }
+    }
+
+    sub load {
+        my $self = shift;
+        my $args = { opts => ["--show"], };
+        $args = shift(@_) if ( @_ and ref( $_[0] ) eq "HASH" );
+
+        my @keys = @_;
+        my @opts = ( $args->{opts} ? @{ $args->{opts} } : () );
+        my @cmd  = ( ZMLOCALCONFIG, @opts, @keys );
+
+        my $tout = IO::File->new
+          or return $self->_set_err( 1, "load: open OUT file failed: $!" );
+        my $terr = IO::File->new_tmpfile
+          or return $self->_set_err( 1, "load: open ERR file failed: $!" );
+        my $pid = eval { open3( gensym(), $tout, $terr, @cmd ) }
+          or return $self->_set_err( 1, "load: open zmlocalconfig failed: $@" );
+
+        my %lc;
+        while ( my $line = <$tout> ) {
+            chomp($line);
+            my ( $key, $val ) = split( /\s+=\s+/, $line, 2 );
+            $lc{$key} = $val;
+        }
+        waitpid( $pid, 0 );
+        seek( $terr, 0, 0 );
+
+        my @err;
+        while ( my $line = <$terr> ) {
+            chomp($line);
+            push( @err, $line );
+        }
+
+        return $self->_set_err( 1,
+            "zmlocalconfig: errors: " . join( "; ", @err ) )
+          if (@err);
+        $self->_set_err( 0, "zmlocalconfig returned no data" ) unless (%lc);
+        return wantarray ? %lc : \%lc;
+    }
+
+    1;
+}
