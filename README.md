@@ -16,8 +16,8 @@ https://github.com/Zimbra-Community/zimbra-tools/blob/master/centos7-zimbra-repo
 ## Zimbra Docker by ZeXtras
 [https://hub.docker.com/r/zextras/zimbra8/](https://hub.docker.com/r/zextras/zimbra8/)
 
-* checkdevices (contributed by Dennis Ploeger) - A python script for reporting 
-unauthorized device use in Zimbra
+## checkdevices (contributed by Dennis Ploeger)
+A python script for reporting unauthorized device use in Zimbra
 
 ## External tools
 
