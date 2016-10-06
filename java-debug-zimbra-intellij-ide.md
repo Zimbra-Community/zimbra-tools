@@ -6,7 +6,7 @@
 4. Then on the server as zimbra: `zmcontrol stop`
 5. As root: cp /opt/zimbra/libexec/zmmailboxdmgr /opt/zimbra/libexec/zmmailboxdmgr.old 
 6. As root: cp /opt/zimbra/libexec/zmmailboxdmgr.unrestricted /opt/zimbra/libexec/zmmailboxdmgr 
-7. nano /opt/zimbra/conf/localconfig.xml find the key mailboxd_java_options and append to the value <intellij options row> 
+7. nano /opt/zimbra/conf/localconfig.xml find the key mailboxd_java_options and _append_ to the value line <intellij options row> 
 8. As zimbra: zmcontrol start
 9. if you have a host firewall:  firewall-cmd --add-port=5005/tcp
 
