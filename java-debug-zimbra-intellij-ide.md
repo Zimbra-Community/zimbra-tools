@@ -3,26 +3,12 @@
 1. Open the 'Run/Debug Configuration' panel in Intellij
 2. Create a new 'Remote' configuration
 3. Copy the line 'Command line arguments for running remote JVM', we will refer it as <intellij options row>
-
-The on the server:
-as zimbra:
-
-4. zmcontrol stop
-
-as root:
-
-5. cp /opt/zimbra/libexec/zmmailboxdmgr /opt/zimbra/libexec/zmmailboxdmgr.old 
-6. cp /opt/zimbra/libexec/zmmailboxdmgr.unrestricted /opt/zimbra/libexec/zmmailboxdmgr 
-
+4. Then on the server as zimbra: `zmcontrol stop`
+5. As root: cp /opt/zimbra/libexec/zmmailboxdmgr /opt/zimbra/libexec/zmmailboxdmgr.old 
+6. As root: cp /opt/zimbra/libexec/zmmailboxdmgr.unrestricted /opt/zimbra/libexec/zmmailboxdmgr 
 7. nano /opt/zimbra/conf/localconfig.xml find the key mailboxd_java_options and append to the value <intellij options row> 
-
-as zimbra:
-
-8. zmcontrol start
-
-if you have a host firewall: 
-
-9. firewall-cmd --add-port=5005/tcp
+8. As zimbra: zmcontrol start
+9. if you have a host firewall:  firewall-cmd --add-port=5005/tcp
 
 Here is an example result:
 
