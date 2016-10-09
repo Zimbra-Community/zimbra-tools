@@ -1,6 +1,3 @@
-​​​​​-----BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA256
-
 I looked into checkhack-zimbra-preferences, it seems like writing it took a lot of time, and
 it is a great effort.
 
@@ -41,27 +38,4 @@ and injectfile.txt.tar.gz
 Kind regards,
 
 Barry de Graaff
-Zeta Alliance Founder
-www.zetalliance.org
 
-Skype: barrydegraaff.tk
-Fingerprint: 9e0e165f06b365ee1e47683e20f37303c20703f8
------BEGIN PGP SIGNATURE-----
-Version: OpenPGP.js v2.3.0
-Comment: http://openpgpjs.org
-
-wsFcBAEBCAAQBQJXVlUxCRAg83MDwgcD+AAA504QAKArsOM2aVoyBFHwZlZb
-HuqTuaDO7PY4dM89f4G5mn3fN6ILC2O9Pmhu81/COD5oZJpgAoOSGsJoGH0l
-GXS0yHxrx2TtWT2Oe2PWWLMpErL+JQO1o2vQNru7NV8SJpFi1ZQhFC3kwIHE
-YizpJTCCKJIZdlGJUnOlwjiYT/3ugKV2G2jNfSWxKRgaA0Zevnk1q3DSJN6l
-nl3usSjDyVftyaiakfc0iyd2XaCJBRonkLYOnOkQE0ql/7mFrUUDE/iYS3Mr
-popYGTssY2S/WQkbYzCHFPsqkQWzl9M3zBPVFF0FRB1TkOGMalh7oDrG+eKv
-hpdTBz0srhdRbwf7taTEyvu3JenNaA+ZDHFWAB3NgSFifQsonwdpEXCWjf5J
-wJjF/EgcCyxMc5uSrxFCjhhpcouIZgqv0k8XcKzcmLDPEZO3nMKQnt1SFKLF
-7quKw1Z0ESNuXMgBWdF0qgcjkasRg7Dq/I/Nf34xX6dqOifjwAkCOr8RWulh
-NnLgBBW8N/hVjTOT1idmWtJoXuqk1NnSAFU0PCxiSHi1D64fqeZn9H9ErdSi
-Ukcrg9+XHP9saiIyPxyX0JbNvfP3ScU9FMGe43+IdABUG5m90fLg5Wn1gPZy
-gpvKR8XXFP0QqRUnC13TM0IowObweFURf1ZGsoxznZfXsQt7mTTd+tp41MR+
-K4Qm
-=Vg1d
------END PGP SIGNATURE-----
