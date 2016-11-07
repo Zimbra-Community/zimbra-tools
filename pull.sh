@@ -47,6 +47,8 @@ git clone ssh://git@github.com/Zimbra-Community/zimbra-jars
 git clone ssh://git@github.com/Zimbra-Community/shared-mailbox-toolkit
 git clone ssh://git@github.com/Zimbra-Community/zmsharedgal
 git clone ssh://git@github.com/Zimbra-Community/webdav-client-test-reports
+git clone ssh://git@github.com/Zimbra-Community/prop2xml
+git clone ssh://git@github.com/Zimbra-Community/propmigr
 
 cd "$(dirname "$0")"
 ls | grep -v pull.sh | xargs -I{} git -C {} pull
