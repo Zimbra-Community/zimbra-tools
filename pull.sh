@@ -49,7 +49,7 @@ git clone ssh://git@github.com/Zimbra-Community/zmsharedgal
 git clone ssh://git@github.com/Zimbra-Community/webdav-client-test-reports
 git clone ssh://git@github.com/Zimbra-Community/prop2xml
 git clone ssh://git@github.com/Zimbra-Community/propmigr
-git clone ssh://git@github.com:Zimbra-Community/io_nomennesc_extracontact
+git clone ssh://git@github.com/Zimbra-Community/io_nomennesc_extracontact
 
 cd "$(dirname "$0")"
 ls | grep -v pull.sh | xargs -I{} git -C {} pull
