@@ -51,6 +51,7 @@ git clone ssh://git@github.com/Zimbra-Community/prop2xml
 git clone ssh://git@github.com/Zimbra-Community/propmigr
 git clone ssh://git@github.com/Zimbra-Community/io_nomennesc_extracontact
 git clone ssh://git@github.com/Zimbra-Community/annoucements
+git clone ssh://git@github.com/Zimbra-Community/com_cloudtemple_senderblocker
 
 cd "$(dirname "$0")"
 ls | grep -v pull.sh | xargs -I{} git -C {} pull
