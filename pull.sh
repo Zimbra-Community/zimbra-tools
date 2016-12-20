@@ -51,7 +51,15 @@ git clone ssh://git@github.com/Zimbra-Community/prop2xml
 git clone ssh://git@github.com/Zimbra-Community/propmigr
 git clone ssh://git@github.com/Zimbra-Community/io_nomennesc_extracontact
 git clone ssh://git@github.com/Zimbra-Community/annoucements
+git clone ssh://git@github.com/Zimbra-Community/openpgp-secure-zimlet
 git clone ssh://git@github.com/Zimbra-Community/com_cloudtemple_senderblocker
+git clone ssh://git@github.com/Zimbra-Community/tabiframe-zimlet
+git clone ssh://git@github.com/Zimbra-Community/zimbra-fresh-ui
+git clone ssh://git@github.com/Zimbra-Community/zmantis
+git clone ssh://git@github.com/Zimbra-Community/zimbra_bits
+git clone ssh://git@github.com/Zimbra-Community/letsencrypt-zimbra
+git clone ssh://git@github.com/Zimbra-Community/zimbra-chef
+git clone ssh://git@github.com/Zimbra-Community/zmoauthprovext
 
 cd "$(dirname "$0")"
 ls | grep -v pull.sh | xargs -I{} git -C {} pull
