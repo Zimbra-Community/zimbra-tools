@@ -60,6 +60,7 @@ git clone ssh://git@github.com/Zimbra-Community/zimbra_bits
 git clone ssh://git@github.com/Zimbra-Community/letsencrypt-zimbra
 git clone ssh://git@github.com/Zimbra-Community/zimbra-chef
 git clone ssh://git@github.com/Zimbra-Community/zmoauthprovext
+git clone ssh://git@github.com/Zimbra-Community/com_zimbra_emailreminder
 
 cd "$(dirname "$0")"
 ls | grep -v pull.sh | xargs -I{} git -C {} pull
