@@ -64,6 +64,7 @@ git clone ssh://git@github.com/Zimbra-Community/com_zimbra_emailreminder
 git clone ssh://git@github.com/Zimbra-Community/OCS
 git clone ssh://git@github.com/Zimbra-Community/ZimbraScripts
 git clone ssh://git@github.com/Zimbra-Community/rmail
+git clone ssh://git@github.com/Zimbra-Community/OpenZAL
 
 cd "$(dirname "$0")"
 ls | grep -v pull.sh | xargs -I{} git -C {} pull
