@@ -54,7 +54,6 @@ git clone ssh://git@github.com/Zimbra-Community/annoucements
 git clone ssh://git@github.com/Zimbra-Community/openpgp-secure-zimlet
 git clone ssh://git@github.com/Zimbra-Community/com_cloudtemple_senderblocker
 git clone ssh://git@github.com/Zimbra-Community/tabiframe-zimlet
-git clone ssh://git@github.com/Zimbra-Community/zimbra-fresh-ui
 git clone ssh://git@github.com/Zimbra-Community/zmantis
 git clone ssh://git@github.com/Zimbra-Community/zimbra_bits
 git clone ssh://git@github.com/Zimbra-Community/letsencrypt-zimbra
