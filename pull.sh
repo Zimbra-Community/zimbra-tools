@@ -50,7 +50,7 @@ git clone ssh://git@github.com/Zimbra-Community/webdav-client-test-reports
 git clone ssh://git@github.com/Zimbra-Community/prop2xml
 git clone ssh://git@github.com/Zimbra-Community/propmigr
 git clone ssh://git@github.com/Zimbra-Community/io_nomennesc_extracontact
-git clone ssh://git@github.com/Zimbra-Community/annoucements
+git clone ssh://git@github.com/Zimbra-Community/announcements
 git clone ssh://git@github.com/Zimbra-Community/openpgp-secure-zimlet
 git clone ssh://git@github.com/Zimbra-Community/com_cloudtemple_senderblocker
 git clone ssh://git@github.com/Zimbra-Community/tabiframe-zimlet
