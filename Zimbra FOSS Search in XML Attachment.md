@@ -27,6 +27,6 @@ Create /tmp/xml.ldif with the following content:
 Then add this to Zimbra LDAP:
 
     zmlocalconfig -s zimbra_ldap_password
-    ldapadd -x -h `zmhostname` -D uid=zimbra,cn=admins,cn=zimbra -W -f /tmp/a.ldiff 
+    ldapadd -x -h `zmhostname` -D uid=zimbra,cn=admins,cn=zimbra -W -f /tmp/xml.ldiff 
     
 Verify the change with ldapsearch and then restart Zimbra with zmcontrol restart. You will probably need to re-do this on every upgrade of Zimbra (aka after you run the Zimbra installer).
