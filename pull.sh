@@ -67,6 +67,7 @@ git clone ssh://git@github.com/Zimbra-Community/OpenZAL
 git clone ssh://git@github.com/Zimbra-Community/account-history
 git clone ssh://git@github.com/Zimbra-Community/signature-template
 git clone ssh://git@github.com/Zimbra-Community/ZimbraThaiAnalyzer
+git clone ssh://git@github.com/Zimbra-Community/mailing-lists
 
 cd "$(dirname "$0")"
 ls | grep -v pull.sh | xargs -I{} git -C {} pull
