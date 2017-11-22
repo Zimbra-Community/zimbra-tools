@@ -115,7 +115,18 @@ echo "/opt/zimbra/bin/mysql policyd_db -e \"select count(instance) count, sender
 chmod +rx /usr/local/sbin/cbpolicyd-report
 
 echo "Setting up cron"
-echo "35 3 * * * zimbra bash -l -c '/opt/zimbra/cbpolicyd/bin/cbpadmin --config=/opt/zimbra/conf/cbpolicyd.conf --cleanup' >/dev/null" > /etc/cron.d/cbpolicyd-cleanup
+
+if [[ -x "/opt/zimbra/common/bin/cbpadmin" ]]
+then
+   #8.7
+    echo "35 3 * * * zimbra bash -l -c '/opt/zimbra/common/bin/cbpadmin --config=/opt/zimbra/conf/cbpolicyd.conf --cleanup' >/dev/null" > /etc/cron.d/cbpolicyd-cleanup
+elif  [[ -x "/opt/zimbra/cbpolicyd/bin/cbpadmin " ]]
+then
+    #8.6
+    echo "35 3 * * * zimbra bash -l -c '/opt/zimbra/cbpolicyd/bin/cbpadmin --config=/opt/zimbra/conf/cbpolicyd.conf --cleanup' >/dev/null" > /etc/cron.d/cbpolicyd-cleanup
+else
+    echo "cbpadmin is not found in /opt/zimbra"
+fi
 
 echo "--------------------------------------------------------------------------------------------------------------
 CBPolicyd installed successful, the following policy is installed:
