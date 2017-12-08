@@ -29,7 +29,7 @@ git clone ssh://git@github.com/Zimbra-Community/owncloud-zimlet
 git clone ssh://git@github.com/Zimbra-Community/list-unsubscribe-zimlet
 git clone ssh://git@github.com/Zimbra-Community/zimbra-patches
 git clone ssh://git@github.com/Zimbra-Community/attachmentalert-zimlet
-git clone ssh://git@github.com/Zimbra-Community/sa-alert-zimlet
+git clone ssh://git@github.com/Zimbra-Community/spoofing-and-phishing-alert-zimlet
 git clone ssh://git@github.com/Zimbra-Community/com_zimbra_converse
 git clone ssh://git@github.com/Zimbra-Community/js-zimbra
 git clone ssh://git@github.com/Zimbra-Community/zimlets-foss
