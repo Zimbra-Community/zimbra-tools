@@ -120,7 +120,7 @@ if [[ -x "/opt/zimbra/common/bin/cbpadmin" ]]
 then
    #8.7
     echo "35 3 * * * zimbra bash -l -c '/opt/zimbra/common/bin/cbpadmin --config=/opt/zimbra/conf/cbpolicyd.conf --cleanup' >/dev/null" > /etc/cron.d/cbpolicyd-cleanup
-elif  [[ -x "/opt/zimbra/cbpolicyd/bin/cbpadmin " ]]
+elif  [[ -x "/opt/zimbra/cbpolicyd/bin/cbpadmin" ]]
 then
     #8.6
     echo "35 3 * * * zimbra bash -l -c '/opt/zimbra/cbpolicyd/bin/cbpadmin --config=/opt/zimbra/conf/cbpolicyd.conf --cleanup' >/dev/null" > /etc/cron.d/cbpolicyd-cleanup
