@@ -1,10 +1,13 @@
 #!/bin/bash
 
-echo "If your ssh-key is protected with a password it is recommended you run:";
-echo 'ssh-agent bash'
-echo 'ssh-add ~/.ssh/id_rsa'
-echo "Hit enter, if you want to continue running this script, or CTRL+C  to abort";
-read dum;
+#echo "If your ssh-key is protected with a password it is recommended you run:";
+#echo 'ssh-agent bash'
+#echo 'ssh-add ~/.ssh/id_rsa'
+#echo "Hit enter, if you want to continue running this script, or CTRL+C  to abort";
+#read dum;
+
+eval `ssh-agent`
+ssh-add ~/.ssh/id_rsa
 
 mkdir ~/Zimbra-Community
 
