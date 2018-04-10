@@ -33,7 +33,6 @@ git clone ssh://git@github.com/Zimbra-Community/list-unsubscribe-zimlet
 git clone ssh://git@github.com/Zimbra-Community/zimbra-patches
 git clone ssh://git@github.com/Zimbra-Community/attachmentalert-zimlet
 git clone ssh://git@github.com/Zimbra-Community/spoofing-and-phishing-alert-zimlet
-git clone ssh://git@github.com/Zimbra-Community/com_zimbra_converse
 git clone ssh://git@github.com/Zimbra-Community/js-zimbra
 git clone ssh://git@github.com/Zimbra-Community/zimlets-foss
 git clone ssh://git@github.com/Zimbra-Community/build
@@ -58,7 +57,6 @@ git clone ssh://git@github.com/Zimbra-Community/openpgp-secure-zimlet
 git clone ssh://git@github.com/Zimbra-Community/com_cloudtemple_senderblocker
 git clone ssh://git@github.com/Zimbra-Community/tabiframe-zimlet
 git clone ssh://git@github.com/Zimbra-Community/zmantis
-git clone ssh://git@github.com/Zimbra-Community/zimbra_bits
 git clone ssh://git@github.com/Zimbra-Community/letsencrypt-zimbra
 git clone ssh://git@github.com/Zimbra-Community/zimbra-chef
 git clone ssh://git@github.com/Zimbra-Community/zmoauthprovext
@@ -71,7 +69,6 @@ git clone ssh://git@github.com/Zimbra-Community/account-history
 git clone ssh://git@github.com/Zimbra-Community/signature-template
 git clone ssh://git@github.com/Zimbra-Community/ZimbraThaiAnalyzer
 git clone ssh://git@github.com/Zimbra-Community/mailing-lists
-git clone ssh://git@github.com/Zimbra-Community/jdbcldap
 
 cd "$(dirname "$0")"
 ls | grep -v pull.sh | xargs -I{} git -C {} pull
