@@ -70,6 +70,7 @@ git clone ssh://git@github.com/Zimbra-Community/ZimbraThaiAnalyzer
 git clone ssh://git@github.com/Zimbra-Community/mailing-lists
 git clone ssh://git@github.com/Zimbra-Community/startmeeting
 git clone ssh://git@github.com/Zimbra-Community/zimbra-rocket
+git clone ssh://git@github.com/Zimbra-Community/bigbluebutton-zimlet
 
 cd "$(dirname "$0")"
 ls | grep -v pull.sh | xargs -I{} git -C {} pull
