@@ -40,7 +40,6 @@ git clone ssh://git@github.com/Zimbra-Community/zmpublish
 git clone ssh://git@github.com/Zimbra-Community/de_dieploegers_savesend
 git clone ssh://git@github.com/Zimbra-Community/zopenhsm
 git clone ssh://git@github.com/Zimbra-Community/bulkreply-zimlet
-git clone ssh://git@github.com/Zimbra-Community/zimbra-docker
 git clone ssh://git@github.com/Zimbra-Community/com_zimbra_emailtemplates
 git clone ssh://git@github.com/Zimbra-Community/ca_uoguelph_ccs_printbutton
 git clone ssh://git@github.com/Zimbra-Community/ZetaAlliance-Graphics
