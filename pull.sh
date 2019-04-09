@@ -73,6 +73,7 @@ git clone ssh://git@github.com/Zimbra-Community/bigbluebutton-zimlet
 git clone ssh://git@github.com/Zimbra-Community/user-alias
 git clone ssh://git@github.com/Zimbra-Community/zimlet-provisioning
 git clone ssh://git@github.com/Zimbra-Community/zimbra-foss-2fa
+git clone ssh://git@github.com/Zimbra-Community/reply-by-filter
 
 cd "$(dirname "$0")"
 ls | grep -v pull.sh | xargs -I{} git -C {} pull
