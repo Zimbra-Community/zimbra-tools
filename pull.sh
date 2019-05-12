@@ -20,7 +20,7 @@ git clone ssh://git@github.com/Zimbra-Community/com_zimbra_stickynotes
 git clone ssh://git@github.com/Zimbra-Community/adopted
 git clone ssh://git@github.com/Zimbra-Community/ca_uoguelph_ccs_sidebar
 git clone ssh://git@github.com/Zimbra-Community/ca_uoguelph_ccs_archive
-git clone ssh://git@github.com/Zimbra-Community/zimbra.de_dieploegers_groupcal
+git clone ssh://git@github.com/Zimbra-Community/group-calendar
 git clone ssh://git@github.com/Zimbra-Community/python-zimbra
 git clone ssh://git@github.com/Zimbra-Community/zimbra.de_dieploegers_followup
 git clone ssh://git@github.com/Zimbra-Community/de_dieploegers_admin_vacation
