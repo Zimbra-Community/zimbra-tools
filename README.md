@@ -26,7 +26,7 @@ The following tools are available from their own repositories or websites:
 * [Zimbra ZCO Report script (by silpion)](https://github.com/silpion/zmzcoreport) - Report the versions of the Zimbra Connector for Outlook currently in use
 * [Zmbkpose](https://github.com/bggo/Zmbkpose) - A GPL licensed shell script that does hot backup and hot restore of ZCS Opensource accounts.
 * [Ansible Role](https://github.com/pbruna/ansible-zimbradev) - Ansible Role to make Zimbra Deployment easier when you are testing or coding
-* [Zlockout Monitor](https://github.com/howanitz/zimbra_lockoutd) - A log monitoring daemon that sends an email alert to the admin when a user account goes into lockout mode because of too many failed attempts (e.g. from a dictionary attack)
+* [Zlockout Monitor](https://github.com/kenji21/zimbra_lockoutd) - A log monitoring daemon that sends an email alert to the admin when a user account goes into lockout mode because of too many failed attempts (e.g. from a dictionary attack)
 
 ## Zimbra FOSS HSM 
 
