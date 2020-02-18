@@ -38,7 +38,7 @@ For archival purpose we also forked this repo to:
 
 ## Automated cbpolicd installer
 
-Automated cbpolicd installer for single-server Zimbra 8.6 on CentOS 6 and 7
+Automated cbpolicd installer for single-server Zimbra 8.8.15 patch 7 on CentOS 7
 
 [https://github.com/Zimbra-Community/zimbra-tools/blob/master/cbpolicyd.sh](https://github.com/Zimbra-Community/zimbra-tools/blob/master/cbpolicyd.sh)
 
