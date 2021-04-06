@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Copyright (C) 2016-2020  Barry de Graaff
+# Copyright (C) 2016-2021  Barry de Graaff
 # 
 # Bugs and feedback: https://github.com/Zimbra-Community/zimbra-tools/issues
 # 
@@ -24,7 +24,7 @@ set -e
 # https://wiki.zimbra.com/wiki/Postfix_Policyd#Example_Configuration
 # Thanks 
 
-echo "Automated cbpolicd installer for single-server Zimbra 8.8.15 patch 7 on CentOS 7 (Ubuntu untested)
+echo "Automated cbpolicd installer for single-server Zimbra 8.8.15 patch 7 on CentOS 7, Zimbra 9.0.0 patch 13 on CentOS 7
 - Installs policyd on MariaDB or MySQL (shipped with Zimbra) and show commands on how to activate on Zimbra
 - No webui is installed"
 
