@@ -80,4 +80,4 @@ Apply the filters to an account like this:
 
       cat /tmp/myfilters |xargs -0 zmprov ma info@barrydegraaff.tk zimbraAdminSieveScriptBefore
 
-
+zimbraAdminSieveScriptBefore can be set per account,cos,domain,server.
