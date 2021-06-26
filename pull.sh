@@ -79,6 +79,7 @@ git clone ssh://git@github.com/Zimbra-Community/proxy
 git clone ssh://git@github.com/Zimbra-Community/HPO-Zimlet
 git clone ssh://git@github.com/Zimbra-Community/seafile
 git clone ssh://git@github.com/Zimbra-Community/zimbra-zimlet-lifesize
+git clone ssh://git@github.com/Zimbra-Community/zm-sso
 
 cd "$(dirname "$0")"
 ls | grep -v pull.sh | xargs -I{} git -C {} pull
