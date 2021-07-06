@@ -1,27 +1,29 @@
-# Example Sieve filters for Zimbra 9
+# How-to use Sieve filters on Zimbra
 
-Short how-to on using Sieve Filters on Zimbra. In case you want to add email headers:
+This article is a short how-to on using Sieve Filters on Zimbra. Sieve is a powerful scripting language for filtering incoming email messages. While Zimbra supports user set incoming email filters, the Sieve filters are meant to be set-up and installed by administrators. 
+
+First you want to allow the adding of email headers, which is useful for debugging your filter scripts:
 
       zmprov mc default zimbraSieveEditHeaderEnabled TRUE
 
-Put a your sieve script in `/tmp/myfilters` example:
+Then create a text file with your Sieve script. In this example we use `/tmp/myfilters`:
 
 ```
 require ["fileinto", "reject", "tag", "flag", "editheader"];
 
 # add an external domain header to all email not coming from our own domains
 if allof(
-  not address :domain :is ["from"] ["zetalliance.org", "lists.zetalliance.org", "barrydegraaff.nl"]
+  not address :domain :is ["from"] ["example.org", "lists.example.org", "otherdomain.nl"]
 )
 {
   addheader "X-External-Domain" "Warning come from external domain";
 }
 
-# restrict anyone that uses barrydegraaff.tk to mail to a domain that is not barrydegraaff.nl, but allow mailing to info2@barrydegraaff.tk. To notify the sender in case the mail is rejected. Instead of `reject`, you can use `discard`. Discard will not tell the sender the email was not delivered
+# restrict anyone that uses example.com to mail to a domain that is not example.nl, but allow mailing to info2@example.com. To notify the sender in case the mail is rejected. Instead of `reject`, you can use `discard`. Discard will not tell the sender the email was not delivered
 if allof(
-  address :domain :is ["from"] ["barrydegraaff.tk"],
-  not address :domain :is ["to"] ["barrydegraaff.nl"],
-  not address :is ["cc", "to"] ["info2@barrydegraaff.tk"]
+  address :domain :is ["from"] ["example.com"],
+  not address :domain :is ["to"] ["example.nl"],
+  not address :is ["cc", "to"] ["info2@example.com"]
 )
 {
   reject "sorry gautam does not allow you to email";
@@ -78,6 +80,8 @@ if address :domain :matches ["From"] ["*.za", "*.pe","*.sg","*.id","*.mk","*.cn"
 
 Apply the filters to an account like this:
 
-      cat /tmp/myfilters |xargs -0 zmprov ma info@barrydegraaff.tk zimbraAdminSieveScriptBefore
+      cat /tmp/myfilters |xargs -0 zmprov ma info@example.com zimbraAdminSieveScriptBefore
 
-zimbraAdminSieveScriptBefore can be set per account,cos,domain,server.
+You can set `zimbraAdminSieveScriptBefore` per account,cos,domain,server. If you set it on an a domain and on an account in that domain, the script on the account is used. To unset `zimbraAdminSieveScriptBefore`  on an account you can do:
+
+      zmprov ma info@example.com zimbraAdminSieveScriptBefore ""
