@@ -83,6 +83,7 @@ git clone ssh://git@github.com/Zimbra-Community/zm-sso
 git clone ssh://git@github.com/Zimbra-Community/Alfresco-Zimlet
 git clone ssh://git@github.com/Zimbra-Community/zsugar
 git clone ssh://git@github.com/Zimbra-Community/zimlet-jitsi-meet
+git clone ssh://git@github.com/Zimbra-Community/salesforce
 
 
 cd "$(dirname "$0")"
