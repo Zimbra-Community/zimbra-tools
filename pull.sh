@@ -84,7 +84,10 @@ git clone ssh://git@github.com/Zimbra-Community/Alfresco-Zimlet
 git clone ssh://git@github.com/Zimbra-Community/zsugar
 git clone ssh://git@github.com/Zimbra-Community/zimlet-jitsi-meet
 git clone ssh://git@github.com/Zimbra-Community/salesforce
-
+git clone ssh://git@github.com/Zimbra-Community/zimbra-zimlet-bigbluebutton
+git clone ssh://git@github.com/Zimbra-Community/zimbra-crowd-extension
+git clone ssh://git@github.com/Zimbra-Community/MyZimbra-Cloud
+git clone ssh://git@github.com/Zimbra-Community/DAWebmail
 
 cd "$(dirname "$0")"
 ls | grep -v pull.sh | xargs -I{} git -C {} pull
