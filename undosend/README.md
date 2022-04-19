@@ -4,7 +4,7 @@ A CLI script that can be used to remove email based on the message-id that can a
 
 **Warning running this script can potentially destroy a lot of messages, so make sure to test it first, have a backup and change the script to fit your needs.**
 
-The script will put a placeholder message, telling the recipient the message with `deleted message subject` was recalled. 
+The script will put a placeholder message, telling the recipient that the message with `deleted message subject` was recalled. 
 
 Installation:
 
