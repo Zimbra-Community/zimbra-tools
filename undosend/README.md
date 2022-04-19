@@ -18,3 +18,7 @@ Usage from the command line as zimbra user:
       /usr/local/sbin/undosend 953242361.435.1586347147822.JavaMail.zimbra@mind.zimbra.io
       
 So use value from Message-Id header without <>. Please note, this command line script does not check permissions, so it will remove the mails with the requested message-id if it finds them.
+
+## Open source edition
+
+Perhaps this script can be made to work with `zmmboxsearchx` from  https://github.com/Zimbra-Community/zimbra-tools/tree/master/zmmboxsearchx but that has yet to be developed and tested.
