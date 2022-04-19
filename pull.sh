@@ -80,7 +80,6 @@ git clone ssh://git@github.com/Zimbra-Community/seafile
 git clone ssh://git@github.com/Zimbra-Community/zimbra-zimlet-lifesize
 git clone ssh://git@github.com/Zimbra-Community/zm-sso
 git clone ssh://git@github.com/Zimbra-Community/Alfresco-Zimlet
-git clone ssh://git@github.com/Zimbra-Community/zsugar
 git clone ssh://git@github.com/Zimbra-Community/zimlet-jitsi-meet
 git clone ssh://git@github.com/Zimbra-Community/salesforce
 git clone ssh://git@github.com/Zimbra-Community/zimbra-zimlet-bigbluebutton
