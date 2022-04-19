@@ -1,5 +1,10 @@
 # Undo Send
 
+Installation:
+
+      wget https://raw.githubusercontent.com/Zimbra-Community/zimbra-tools/master/undosend/undosend -O /usr/local/sbin/undosend
+      chmod +rx /usr/local/sbin/undosend
+
 ## Usage from CLI
 
 Usage from the command line as zimbra user: 
