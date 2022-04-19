@@ -6,6 +6,16 @@
 #
 # The java extension for use with the Zimlet does verify the From header against the user's account email address and aliasses.
 
+WHO=`whoami`
+if [ $WHO != "zimbra" ]
+then
+echo
+echo "Execute this scipt as user zimbra (\"su - zimbra\")"
+echo
+exit 1
+fi
+
+
 SRFILE="$(mktemp /tmp/searchandremove.XXXXXXXX.txt)"
 /usr/bin/echo "" > "${SRFILE}"
 
