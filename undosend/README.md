@@ -1,5 +1,11 @@
 # Undo Send
 
+A CLI script that can be used to remove email based on the message-id that can act as an Undo Send option. It works on Network Edition only as it basically is a wrapper around `zmmboxsearch`.
+
+**Warning running this script can potentially destroy a lot of messages, so make sure to test it first, have a backup and change the script to fit your needs.**
+
+The script will put a placeholder message, telling the recipient the message with `deleted message subject` was recalled. 
+
 Installation:
 
       wget https://raw.githubusercontent.com/Zimbra-Community/zimbra-tools/master/undosend/undosend -O /usr/local/sbin/undosend
