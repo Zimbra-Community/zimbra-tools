@@ -46,7 +46,6 @@ git clone ssh://git@github.com/Zimbra-Community/zmexit
 git clone ssh://git@github.com/Zimbra-Community/zimbra-jars
 git clone ssh://git@github.com/Zimbra-Community/shared-mailbox-toolkit
 git clone ssh://git@github.com/Zimbra-Community/zmsharedgal
-git clone ssh://git@github.com/Zimbra-Community/webdav-client-test-reports
 git clone ssh://git@github.com/Zimbra-Community/prop2xml
 git clone ssh://git@github.com/Zimbra-Community/propmigr
 git clone ssh://git@github.com/Zimbra-Community/io_nomennesc_extracontact
