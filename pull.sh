@@ -32,7 +32,6 @@ git clone ssh://git@github.com/Zimbra-Community/owncloud-zimlet
 git clone ssh://git@github.com/Zimbra-Community/list-unsubscribe-zimlet
 git clone ssh://git@github.com/Zimbra-Community/zimbra-patches
 git clone ssh://git@github.com/Zimbra-Community/attachmentalert-zimlet
-git clone ssh://git@github.com/Zimbra-Community/spoofing-and-phishing-alert-zimlet
 git clone ssh://git@github.com/Zimbra-Community/js-zimbra
 git clone ssh://git@github.com/Zimbra-Community/zimlets-foss
 git clone ssh://git@github.com/Zimbra-Community/build
@@ -88,6 +87,8 @@ git clone ssh://git@github.com/Zimbra-Community/zimbra-zimlet-bigbluebutton
 git clone ssh://git@github.com/Zimbra-Community/zimbra-crowd-extension
 git clone ssh://git@github.com/Zimbra-Community/MyZimbra-Cloud
 git clone ssh://git@github.com/Zimbra-Community/DAWebmail
+git clone ssh://git@github.com/Zimbra-Community/zsuitecrm
+git clone ssh://git@github.com/Zimbra-Community/keycloak
 
 cd "$(dirname "$0")"
 ls | grep -v pull.sh | xargs -I{} git -C {} pull
