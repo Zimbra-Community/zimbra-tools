@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Copyright (C) 2016  Barry de Graaff
+# Copyright (C) 2016-2021  Barry de Graaff
 # 
 # Bugs and feedback: https://github.com/Zimbra-Community/zimbra-tools/issues
 # 
@@ -24,7 +24,7 @@ set -e
 # https://wiki.zimbra.com/wiki/Postfix_Policyd#Example_Configuration
 # Thanks 
 
-echo "Automated cbpolicd installer for single-server Zimbra 8.6 and 8.7 on CentOS 6 or 7 (Ubuntu untested)
+echo "Automated cbpolicd installer for single-server Zimbra 8.8.15 patch 7 on CentOS 7, Zimbra 9.0.0 patch 13 on CentOS 7, Zimbra 9.0.0 patch 14 on Ubuntu 18.
 - Installs policyd on MariaDB or MySQL (shipped with Zimbra) and show commands on how to activate on Zimbra
 - No webui is installed"
 
@@ -40,19 +40,19 @@ CBPOLICYD_PWD=$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c${1:-10};echo;)
 POLICYDDBCREATE="$(mktemp /tmp/policyd-dbcreate.XXXXXXXX.sql)"
 cat <<EOF > "${POLICYDDBCREATE}"
 CREATE DATABASE policyd_db CHARACTER SET 'UTF8'; 
-CREATE USER 'ad-policyd_db'@'127.0.0.1' IDENTIFIED BY '${CBPOLICYD_PWD}'; 
-GRANT ALL PRIVILEGES ON policyd_db . * TO 'ad-policyd_db'@'127.0.0.1' WITH GRANT OPTION; 
+CREATE USER 'ad-policyd_db'@'localhost' IDENTIFIED BY '${CBPOLICYD_PWD}'; 
+GRANT ALL PRIVILEGES ON policyd_db . * TO 'ad-policyd_db'@'localhost' WITH GRANT OPTION; 
 FLUSH PRIVILEGES ; 
 EOF
 
 /opt/zimbra/bin/mysql --force < "${POLICYDDBCREATE}" > /dev/null 2>&1
 
 cat <<EOF > "${POLICYDDBCREATE}"
-DROP USER 'ad-policyd_db'@'127.0.0.1';
+DROP USER 'ad-policyd_db'@'localhost';
 DROP DATABASE policyd_db;
 CREATE DATABASE policyd_db CHARACTER SET 'UTF8'; 
-CREATE USER 'ad-policyd_db'@'127.0.0.1' IDENTIFIED BY '${CBPOLICYD_PWD}'; 
-GRANT ALL PRIVILEGES ON policyd_db . * TO 'ad-policyd_db'@'127.0.0.1' WITH GRANT OPTION; 
+CREATE USER 'ad-policyd_db'@'localhost' IDENTIFIED BY '${CBPOLICYD_PWD}'; 
+GRANT ALL PRIVILEGES ON policyd_db . * TO 'ad-policyd_db'@'localhost' WITH GRANT OPTION; 
 FLUSH PRIVILEGES ; 
 EOF
 
@@ -100,8 +100,8 @@ POLICYDPOLICYSQL="$(mktemp /tmp/policyd-policy.XXXXXXXX.sql)"
 cat <<EOF > "${POLICYDPOLICYSQL}"
 INSERT INTO policies (ID, Name,Priority,Description) VALUES(6, 'Zimbra CBPolicyd Policies', 0, 'Zimbra CBPolicyd Policies');
 INSERT INTO policy_members (PolicyID,Source,Destination) VALUES(6, 'any', 'any');
-INSERT INTO quotas (PolicyID,Name,Track,Period,Verdict,Data) VALUES (6, 'Sender:user@domain','Sender:user@domain', 60, 'DEFER', 'Deferring: Too many messages from sender in last 60');
-INSERT INTO quotas (PolicyID,Name,Track,Period,Verdict) VALUES (6, 'Recipient:@domain', 'Recipient:@domain', 60, 'REJECT');
+INSERT INTO quotas (PolicyID,Name,Track,Period,Verdict,Data) VALUES (6, 'Sender:user@domain','Sender:user@domain', 60, 'DEFER', 'You are sending too many emails, contact helpdesk');
+INSERT INTO quotas (PolicyID,Name,Track,Period,Verdict) VALUES (6, 'Recipient:user@domain', 'Recipient:user@domain', 60, 'REJECT');
 INSERT INTO quotas_limits (QuotasID,Type,CounterLimit) VALUES(3, 'MessageCount', 100);
 INSERT INTO quotas_limits (QuotasID,Type,CounterLimit) VALUES(4, 'MessageCount', 125);
 EOF

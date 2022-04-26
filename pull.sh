@@ -32,7 +32,6 @@ git clone ssh://git@github.com/Zimbra-Community/owncloud-zimlet
 git clone ssh://git@github.com/Zimbra-Community/list-unsubscribe-zimlet
 git clone ssh://git@github.com/Zimbra-Community/zimbra-patches
 git clone ssh://git@github.com/Zimbra-Community/attachmentalert-zimlet
-git clone ssh://git@github.com/Zimbra-Community/spoofing-and-phishing-alert-zimlet
 git clone ssh://git@github.com/Zimbra-Community/js-zimbra
 git clone ssh://git@github.com/Zimbra-Community/zimlets-foss
 git clone ssh://git@github.com/Zimbra-Community/build
@@ -47,7 +46,6 @@ git clone ssh://git@github.com/Zimbra-Community/zmexit
 git clone ssh://git@github.com/Zimbra-Community/zimbra-jars
 git clone ssh://git@github.com/Zimbra-Community/shared-mailbox-toolkit
 git clone ssh://git@github.com/Zimbra-Community/zmsharedgal
-git clone ssh://git@github.com/Zimbra-Community/webdav-client-test-reports
 git clone ssh://git@github.com/Zimbra-Community/prop2xml
 git clone ssh://git@github.com/Zimbra-Community/propmigr
 git clone ssh://git@github.com/Zimbra-Community/io_nomennesc_extracontact
@@ -78,6 +76,17 @@ git clone ssh://git@github.com/Zimbra-Community/unsplash
 git clone ssh://git@github.com/Zimbra-Community/proxy
 git clone ssh://git@github.com/Zimbra-Community/HPO-Zimlet
 git clone ssh://git@github.com/Zimbra-Community/seafile
+git clone ssh://git@github.com/Zimbra-Community/zimbra-zimlet-lifesize
+git clone ssh://git@github.com/Zimbra-Community/zm-sso
+git clone ssh://git@github.com/Zimbra-Community/Alfresco-Zimlet
+git clone ssh://git@github.com/Zimbra-Community/zimlet-jitsi-meet
+git clone ssh://git@github.com/Zimbra-Community/salesforce
+git clone ssh://git@github.com/Zimbra-Community/zimbra-zimlet-bigbluebutton
+git clone ssh://git@github.com/Zimbra-Community/zimbra-crowd-extension
+git clone ssh://git@github.com/Zimbra-Community/MyZimbra-Cloud
+git clone ssh://git@github.com/Zimbra-Community/DAWebmail
+git clone ssh://git@github.com/Zimbra-Community/zsuitecrm
+git clone ssh://git@github.com/Zimbra-Community/keycloak
 
 cd "$(dirname "$0")"
 ls | grep -v pull.sh | xargs -I{} git -C {} pull

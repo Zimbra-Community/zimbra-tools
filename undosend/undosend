@@ -1,0 +1,57 @@
+#!/bin/bash
+
+# Usage from the command line as zimbra user: /usr/local/sbin/undosend 953242361.435.1586347147822.JavaMail.zimbra@mind.zimbra.io
+# So use value from Message-Id header without <>
+# Please note, this command line script does not check permissions, so it will remove the mails with the requested message-id if it finds them.
+#
+# The java extension for use with the Zimlet does verify the From header against the user's account email address and aliasses.
+
+WHO=`whoami`
+if [ $WHO != "zimbra" ]
+then
+echo
+echo "Execute this scipt as user zimbra (\"su - zimbra\")"
+echo
+exit 1
+fi
+
+
+SRFILE="$(mktemp /tmp/searchandremove.XXXXXXXX.txt)"
+/usr/bin/echo "" > "${SRFILE}"
+
+#TODO: Add the time stamp back into the search query
+#after:-$2minutes
+
+mapfile -t VA < <(/opt/zimbra/bin/zmmboxsearch -m "*" -q "(is:anywhere msgid:$1)" | egrep -v "Address|Date|Size|Folder|Flags|Fragment|Conv|\)")
+len=${#VA[@]}
+
+while [[ $i -lt $len ]]; do
+    MBOX=$(/usr/bin/echo ${VA[$i]} | /usr/bin/awk -F":" '{print $2}' | /usr/bin/sed -e 's/^[[:space:]]*//')
+    MSGID=$(/usr/bin/echo ${VA[$i]} | /usr/bin/awk -F":" '{print $3}')
+    /usr/bin/echo "sm $MBOX" >> "${SRFILE}"
+    /usr/bin/echo "dm $MSGID" >> "${SRFILE}"
+    
+    ADDMSG="$(mktemp /tmp/addmsg.XXXXXXXX.txt)"
+    /usr/bin/echo "Date: $(date "+%a, %d %b %Y %T %Z")" > "${ADDMSG}"
+    /usr/bin/echo "Message-ID: <$(uuidgen)@notification.message>" >> "${ADDMSG}"
+    
+    ((i=i+1))
+    SUBJECT=$(/usr/bin/echo ${VA[$i]}|/usr/bin/awk -vOFS=: '{$1=""; print $0}'|/usr/bin/sed 's/^://')
+    /usr/bin/echo "SUBJECT: [RECALL] $SUBJECT" >> "${ADDMSG}"
+    
+    ((i=i+1))
+    FROM=$(/usr/bin/echo ${VA[$i]} | /usr/bin/sed 's/^.\{4\}//g')
+    /usr/bin/echo "FROM: $FROM" >> "${ADDMSG}"
+    SENDER=$(/usr/bin/echo ${VA[$i]} | /usr/bin/sed 's/^.\{4\}//g' | cut -f1 -d"<")
+
+    /usr/bin/echo "" >> "${ADDMSG}"
+    /usr/bin/echo "$SENDER has recalled message, \"$SUBJECT\"." >> "${ADDMSG}"
+    /usr/bin/echo "" >> "${ADDMSG}"
+    
+    /usr/bin/echo "am /INBOX "${ADDMSG}"" >> "${SRFILE}"
+    ((i=i+2))
+done
+
+/opt/zimbra/bin/zmmailbox -z -f "${SRFILE}"
+rm -f "${SRFILE}"
+rm -f /tmp/addmsg.*.txt
