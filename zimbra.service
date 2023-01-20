@@ -14,7 +14,6 @@ UMask=0027
 
 LimitNOFILE=524288
 
-UnsetEnvironment=LD_LIBRARY_PATH
 Environment="PERLLIB=/opt/zimbra/common/lib/perl5/x86_64-linux-thread-multi:/opt/zimbra/common/lib/perl5"
 Environment="PERL5LIB=/opt/zimbra/common/lib/perl5/x86_64-linux-thread-multi:/opt/zimbra/common/lib/perl5"
 Environment="JYTHONPATH=/opt/zimbra/common/lib/jylibs"
