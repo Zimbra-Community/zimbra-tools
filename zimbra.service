@@ -7,14 +7,35 @@ Conflicts=sendmail.service exim.service postfix.service
 
 [Service]
 Type=forking
+
 User=zimbra
 Group=zimbra
-Environment=PERL5LIB=/opt/zimbra/common/lib/perl5/x86_64-linux-gnu-thread-multi:/opt/zimbra/common/lib/perl5
+UMask=0027
+
+LimitNOFILE=524288
+
+Environment="PERLLIB=/opt/zimbra/common/lib/perl5/x86_64-linux-thread-multi:/opt/zimbra/common/lib/perl5"
+Environment="PERL5LIB=/opt/zimbra/common/lib/perl5/x86_64-linux-thread-multi:/opt/zimbra/common/lib/perl5"
+Environment="JYTHONPATH=/opt/zimbra/common/lib/jylibs"
+Environment="MANPATH=/opt/zimbra/common/share/man"
+Environment="JAVA_HOME=/opt/zimbra/common/lib/jvm/java"
+Environment="SNMPCONFPATH=/opt/zimbra/conf"
+Environment="PATH=/opt/zimbra/bin:/opt/zimbra/common/lib/jvm/java/bin:/opt/zimbra/common/bin:/opt/zimbra/common/sbin:/usr/sbin:/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin"
+Environment="USERNAME=zimbra"
+Environment="LANG=C"
+Environment="LC_ALL=C"
+
+PassEnvironment=PERLLIB PERL5LIB JYTHONPATH MANPATH JAVA_HOME SNMPCONFPATH PATH USERNAME LANG LC_ALL
+
 ExecStart=/opt/zimbra/bin/zmcontrol start
 ExecStop=/opt/zimbra/bin/zmcontrol stop
 ExecReload=/opt/zimbra/bin/zmcontrol restart
 
-TimeoutSec=500
+Restart=on-failure
+TimeoutSec=120
+
+StandardOutput=null
 
 [Install]
 WantedBy=multi-user.target
+
