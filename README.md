@@ -66,3 +66,7 @@ This tool is a bit buggy, if it fails, trying again usually does the trick.
     dpkg -i zmmboxsearchx.deb
 
 Example: `zmmboxsearchx --query admin --account testuser3@myzimbra.com,admin@myzimbra.com,test@myzimbra.com`
+
+## Authentication token decoding tools
+
+You can decode the Zimbra authentication token cookie using `zmprov gati <ZM_AUTH_TOKEN>` from the command line on a Zimbra server. You can also use the stand-alone Perl script from [https://github.com/Zimbra-Community/zimbra-tools/blob/master/zmdecodeauthtoken.pl](https://github.com/Zimbra-Community/zimbra-tools/blob/master/zmdecodeauthtoken.pl)
