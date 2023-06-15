@@ -14,7 +14,7 @@ while IFS= read -r expDate; do
    fi;
 done <<< "$expDates"
 
-#In case a switch is made from commercial to self-signed cert, zmcertmgr viewdeployedcrt shows the commercial cert, so manually check the deployed server.crt as well
+#In case the certificate was renewed but Zimbra not restarted, zmcertmgr viewdeployedcrt shows certificate that will be used after restart, so check the running cert manually
 expDate=$(cat /opt/zimbra/ssl/zimbra/server/server.crt | /opt/zimbra/common/bin/openssl x509 -noout -enddate | grep notAfter| awk -F '=' '{print $2}')
 expirationDate=$(date -d "$expDate" +%s)
 
