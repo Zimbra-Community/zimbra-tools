@@ -12,7 +12,7 @@ fi
 if [ $# -ne 2 ]
 then
 echo
-echo "Send an email notification when Zimbra TLS certifcates are about to expire."
+echo "Send an email notification when Zimbra TLS certificates are about to expire."
 echo
 echo "Usage: check-expiration [num-days] [notify-email]"
 echo "Example: check-expiration 25 notify-address@example.com"
